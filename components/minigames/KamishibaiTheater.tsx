@@ -1,0 +1,215 @@
+﻿'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Volume2, ArrowLeft, ArrowRight, Play, CheckCircle2, Sparkles, RefreshCw } from 'lucide-react';
+import { KamishibaiStory, KamishibaiCard } from '@/lib/game-data';
+import { audioSynth } from '@/lib/audio-synth';
+import { tts } from '@/lib/tts';
+
+interface KamishibaiTheaterProps {
+  story: KamishibaiStory;
+  onComplete: (stars: number) => void;
+}
+
+export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheaterProps) {
+  // Shuffled cards for sequencing challenge
+  const [userSequence, setUserSequence] = useState<KamishibaiCard[]>([]);
+  const [isOrdered, setIsOrdered] = useState(false);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+
+  useEffect(() => {
+    // Shuffle the cards initially
+    const shuffled = [...story.cards].sort(() => Math.random() - 0.5);
+    setUserSequence(shuffled);
+    setIsOrdered(false);
+    setActiveSlideIndex(0);
+    tts.speak(`Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.`);
+  }, [story]);
+
+  // Card movement in sequence
+  const handleMoveCard = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= userSequence.length) return;
+    audioSynth.playClick();
+    const updated = [...userSequence];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+    setUserSequence(updated);
+  };
+
+  const handleVerifySequence = () => {
+    const isCorrect = userSequence.every((card, idx) => card.sequenceIndex === idx + 1);
+
+    if (isCorrect) {
+      setIsOrdered(true);
+      audioSynth.playCelebration();
+      tts.speak(`¡Excelente! Ordenaste la historia a la perfección. Ahora disfruta de la función del Gran Teatro.`);
+      setActiveSlideIndex(0);
+      playSlideAudio(userSequence[0]);
+    } else {
+      audioSynth.playError();
+      tts.speak(`Casi lo logras. Revisa el orden de las láminas para que la historia tenga sentido.`);
+    }
+  };
+
+  const playSlideAudio = (card: KamishibaiCard) => {
+    audioSynth.playChime(card.sequenceIndex);
+    tts.speak(card.narrativeText);
+  };
+
+  const handleNextSlide = () => {
+    if (activeSlideIndex + 1 < userSequence.length) {
+      const nextIdx = activeSlideIndex + 1;
+      setActiveSlideIndex(nextIdx);
+      playSlideAudio(userSequence[nextIdx]);
+    } else {
+      // Theater finished!
+      audioSynth.playCelebration();
+      tts.speak(`Fin de la historia. ¡Gran trabajo como narrador!`);
+      setTimeout(() => {
+        onComplete(3);
+      }, 1500);
+    }
+  };
+
+  const handlePrevSlide = () => {
+    if (activeSlideIndex > 0) {
+      const prevIdx = activeSlideIndex - 1;
+      setActiveSlideIndex(prevIdx);
+      playSlideAudio(userSequence[prevIdx]);
+    }
+  };
+
+  const currentSlide = userSequence[activeSlideIndex] || userSequence[0];
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6 bg-slate-900/90 border-2 border-rose-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <span className="text-3xl">🎭</span>
+          <div>
+            <h3 className="text-lg font-black text-rose-300">Gran Teatro Kamishibai</h3>
+            <p className="text-xs text-slate-400">{story.title}</p>
+          </div>
+        </div>
+        <span className="text-xs bg-rose-950 text-rose-300 px-3 py-1 rounded-full border border-rose-500/30 font-bold">
+          {isOrdered ? `Lámina ${activeSlideIndex + 1} de ${userSequence.length}` : 'Modo Ordenar'}
+        </span>
+      </div>
+
+      {!isOrdered ? (
+        /* PHASE 1: SEQUENCING THE CARDS */
+        <div className="space-y-4">
+          <p className="text-xs text-slate-300 text-center font-medium">
+            Usa las flechas ⬅️ ➡️ para ordenar las 4 láminas (Inicio, Nudo, Clímax y Final):
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {userSequence.map((card, idx) => (
+              <div
+                key={card.id}
+                className="bg-slate-950 border-2 border-slate-700 hover:border-amber-400 p-4 rounded-2xl flex flex-col justify-between space-y-3 shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black bg-slate-800 text-amber-300 px-2 py-0.5 rounded">
+                    Lámina #{idx + 1}
+                  </span>
+                  <div className="flex gap-1 text-2xl">
+                    {card.pictograms.join(' ')}
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-200 font-medium leading-relaxed">
+                  &ldquo;{card.narrativeText}&rdquo;
+                </p>
+
+                <div className="flex justify-between items-center pt-1">
+                  <button
+                    onClick={() => handleMoveCard(idx, idx - 1)}
+                    disabled={idx === 0}
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs"
+                  >
+                    ⬅️ Mover
+                  </button>
+                  <button
+                    onClick={() => {
+                      audioSynth.playClick();
+                      tts.speak(card.narrativeText);
+                    }}
+                    className="text-xs text-amber-300 hover:text-amber-200 flex items-center gap-1 font-bold"
+                  >
+                    <Volume2 className="w-3.5 h-3.5" /> Escuchar
+                  </button>
+                  <button
+                    onClick={() => handleMoveCard(idx, idx + 1)}
+                    disabled={idx === userSequence.length - 1}
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs"
+                  >
+                    Mover ➡️
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={handleVerifySequence}
+            className="w-full py-3.5 bg-gradient-to-r from-rose-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-slate-950 font-black text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>¡Validar Secuencia y Abrir el Teatro!</span>
+          </button>
+        </div>
+      ) : (
+        /* PHASE 2: KAMISHIBAI THEATER STAGE */
+        <div className="space-y-4">
+          {/* Wooden Theater Frame */}
+          <div className="relative bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 p-4 sm:p-6 rounded-3xl border-4 border-amber-700 shadow-2xl">
+            {/* Paper Story Card */}
+            <div className="bg-slate-950 border-2 border-amber-600/40 rounded-2xl p-6 text-center space-y-4 min-h-[220px] flex flex-col justify-between shadow-inner">
+              <div className="flex justify-center items-center gap-3 text-5xl sm:text-6xl animate-bounce-slow">
+                {currentSlide.pictograms.map((p, i) => (
+                  <span key={i}>{p}</span>
+                ))}
+              </div>
+
+              <h4 className="text-base sm:text-lg font-black text-amber-200 leading-relaxed px-2">
+                &ldquo;{currentSlide.narrativeText}&rdquo;
+              </h4>
+
+              <div className="text-[11px] text-amber-400/80 font-bold uppercase tracking-wider">
+                {currentSlide.title}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex justify-between items-center gap-3">
+            <button
+              onClick={handlePrevSlide}
+              disabled={activeSlideIndex === 0}
+              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-bold rounded-xl flex items-center gap-1 text-slate-200"
+            >
+              <ArrowLeft className="w-4 h-4" /> Anterior
+            </button>
+
+            <button
+              onClick={() => playSlideAudio(currentSlide)}
+              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-black rounded-xl shadow flex items-center gap-1.5"
+            >
+              <Volume2 className="w-4 h-4" /> Narrar Lámina
+            </button>
+
+            <button
+              onClick={handleNextSlide}
+              className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-slate-950 text-xs font-black rounded-xl shadow flex items-center gap-1"
+            >
+              <span>{activeSlideIndex + 1 === userSequence.length ? 'Finalizar 🎉' : 'Siguiente'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
