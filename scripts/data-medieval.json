@@ -1,0 +1,150 @@
+﻿{
+  "id": "medieval",
+  "name": "Edad Media & Castillos",
+  "periodLabel": "Año 1200",
+  "icon": "🏰",
+  "themeColor": "blue",
+  "bgGradient": "from-blue-950 via-indigo-950 to-slate-950",
+  "badge": "Caballero Lector",
+  "artifactName": "Engranaje de Hierro Real",
+  "artifactIcon": "⚙️",
+  "description": "¡Adéntrate en la fortaleza medieval! Esquiva dragones, atraviesa el laberinto de la mazmorra, redacta tratados de caballeros y rescata el engranaje real.",
+  "pedagogicalFocus": "Lectura expresiva, fluidez lectora, ortografía de palabras complejas y comprensión inferencial.",
+  "syllablesWords": [
+    { "id": "m1", "word": "castillo", "syllables": ["cas", "ti", "llo"], "pictogram": "🏰", "category": "Medieval", "hint": "Gran fortaleza de piedra con torres y foso" },
+    { "id": "m2", "word": "dragón", "syllables": ["dra", "gón"], "pictogram": "🐉", "category": "Medieval", "hint": "Criatura alada que escupe fuego" },
+    { "id": "m3", "word": "espada", "syllables": ["es", "pa", "da"], "pictogram": "⚔️", "category": "Medieval", "hint": "Arma de metal templado del caballero" },
+    { "id": "m4", "word": "escudo", "syllables": ["es", "cu", "do"], "pictogram": "🛡️", "category": "Medieval", "hint": "Protección para desviar los golpes" },
+    { "id": "m5", "word": "corona", "syllables": ["co", "ro", "na"], "pictogram": "👑", "category": "Medieval", "hint": "Aro de oro que corona a los reyes" },
+    { "id": "m6", "word": "caballero", "syllables": ["ca", "ba", "lle", "ro"], "pictogram": "🤺", "category": "Medieval", "hint": "Guerrero valiente con armadura brillante" },
+    { "id": "m7", "word": "princesa", "syllables": ["prin", "ce", "sa"], "pictogram": "👸", "category": "Medieval", "hint": "Noble valiente del castillo real" },
+    { "id": "m8", "word": "caballo", "syllables": ["ca", "ba", "llo"], "pictogram": "🐎", "category": "Medieval", "hint": "Fiel amigo veloz del caballero" },
+    { "id": "m9", "word": "torre", "syllables": ["to", "rre"], "pictogram": "🗼", "category": "Medieval", "hint": "Construcción alta para vigilar el horizonte" },
+    { "id": "m10", "word": "antorcha", "syllables": ["an", "tor", "cha"], "pictogram": "🕯️", "category": "Medieval", "hint": "Fuego en vara de madera que alumbra" }
+  ],
+  "intruderChallenges": [
+    {
+      "id": "ic-m1",
+      "instruction": "Encuentra el objeto intruso que NO corresponde al mundo de los caballeros:",
+      "type": "semantic",
+      "options": [
+        { "text": "Espada", "pictogram": "⚔️", "isIntruder": false, "reason": "Arma del caballero" },
+        { "text": "Castillo", "pictogram": "🏰", "isIntruder": false, "reason": "Hogar medieval" },
+        { "text": "Computadora", "pictogram": "💻", "isIntruder": true, "reason": "¡En la Edad Media no existían computadoras ni cables!" },
+        { "text": "Escudo", "pictogram": "🛡️", "isIntruder": false, "reason": "Defensa de hierro" }
+      ]
+    },
+    {
+      "id": "ic-m2",
+      "instruction": "Encuentra la palabra intrusa que NO contiene el grupo LL:",
+      "type": "orthographic",
+      "options": [
+        { "text": "Cas-ti-llo", "pictogram": "🏰", "isIntruder": false, "reason": "Tiene LL" },
+        { "text": "Ca-ba-lle-ro", "pictogram": "🤺", "isIntruder": false, "reason": "Tiene LL" },
+        { "text": "Ca-ba-llo", "pictogram": "🐎", "isIntruder": false, "reason": "Tiene LL" },
+        { "text": "Es-pa-da", "pictogram": "⚔️", "isIntruder": true, "reason": "¡Espada no tiene doble L!" }
+      ]
+    }
+  ],
+  "mazeChallenge": {
+    "id": "maze-m1",
+    "title": "El Laberinto de la Mazmorra del Dragón",
+    "theme": "medieval",
+    "targetWord": "ESPADA",
+    "wordPictogram": "⚔️",
+    "grid": [
+      "#######",
+      "#S....#",
+      "#.###.#",
+      "#.....#",
+      "#.###.#",
+      "#....E#",
+      "#######"
+    ],
+    "collectibles": [
+      { "id": "col-m1", "letter": "E", "x": 2, "y": 1, "phonemeHint": "Vocal /e/" },
+      { "id": "col-m2", "letter": "S", "x": 4, "y": 1, "phonemeHint": "Sonido /s/" },
+      { "id": "col-m3", "letter": "P", "x": 5, "y": 2, "phonemeHint": "Sonido /p/" },
+      { "id": "col-m4", "letter": "A", "x": 3, "y": 3, "phonemeHint": "Vocal /a/" },
+      { "id": "col-m5", "letter": "D", "x": 1, "y": 5, "phonemeHint": "Sonido /d/" },
+      { "id": "col-m6", "letter": "A", "x": 4, "y": 5, "phonemeHint": "Vocal /a/" }
+    ],
+    "hint": "Navega por las piedras del castillo, recolecta las letras de E-S-P-A-D-A y llega a la salida."
+  },
+  "pyramidChallenges": [
+    {
+      "id": "pyr-m1",
+      "title": "El Vuelo del Dragón Esmeralda",
+      "theme": "Medieval",
+      "secretCodeWord": "FORTALEZA",
+      "rewardArtifactPiece": "Escudo Encantado",
+      "steps": [
+        { "text": "El caballero" },
+        { "text": "El caballero cabalga" },
+        { "text": "El caballero cabalga hacia el castillo" },
+        { "text": "El caballero cabalga hacia el castillo para proteger la corona real." }
+      ]
+    }
+  ],
+  "writingChallenge": {
+    "id": "write-m1",
+    "title": "Taller de Escritura del Escriba Real",
+    "instruction": "Escribe las palabras del reino para sellar el pergamino oficial con el sello real:",
+    "words": [
+      { "id": "wm1", "word": "ESPADA", "syllables": ["ES", "PA", "DA"], "pictogram": "⚔️", "hint": "Hoja de acero del caballero", "audioClue": "Es-pa-da" },
+      { "id": "wm2", "word": "DRAGON", "syllables": ["DRA", "GON"], "pictogram": "🐉", "hint": "Gigante con alas que arroja fuego", "audioClue": "Dra-gón" },
+      { "id": "wm3", "word": "ESCUDO", "syllables": ["ES", "CU", "DO"], "pictogram": "🛡️", "hint": "Protege al guerrero de las flechas", "audioClue": "Es-cu-do" },
+      { "id": "wm4", "word": "CORONA", "syllables": ["CO", "RO", "NA"], "pictogram": "👑", "hint": "Joya dorada de reyes y reinas", "audioClue": "Co-ro-na" },
+      { "id": "wm5", "word": "CASTILLO", "syllables": ["CAS", "TI", "LLO"], "pictogram": "🏰", "hint": "Gran fortaleza de piedra y murallas", "audioClue": "Cas-ti-llo" }
+    ]
+  },
+  "kamishibaiStory": {
+    "id": "kami-m1",
+    "title": "El Dragón que Amaba los Cuentos",
+    "eraId": "medieval",
+    "moral": "La lectura y las historias tienen el poder de transformar enemigos en grandes amigos.",
+    "cards": [
+      {
+        "id": "kc-m1",
+        "sequenceIndex": 1,
+        "title": "El rugido en la montaña",
+        "narrativeText": "Un dragón verde vigilaba la torre más alta del castillo sin dejar entrar a nadie.",
+        "pictograms": ["🏰", "🐉", "⛰️"],
+        "soundCue": "drum"
+      },
+      {
+        "id": "kc-m2",
+        "sequenceIndex": 2,
+        "title": "El libro del caballero",
+        "narrativeText": "El joven caballero no sacó su espada, sino un gran libro ilustrado de aventuras.",
+        "pictograms": ["🤺", "📖", "✨"],
+        "soundCue": "chime"
+      },
+      {
+        "id": "kc-m3",
+        "sequenceIndex": 3,
+        "title": "La lectura compartida",
+        "narrativeText": "El caballero leyó con voz clara y el dragón se sentó emocionado a escuchar el cuento.",
+        "pictograms": ["🐉", "📖", "❤️"],
+        "soundCue": "portal"
+      },
+      {
+        "id": "kc-m4",
+        "sequenceIndex": 4,
+        "title": "El engranaje obsequiado",
+        "narrativeText": "Agradecido por la historia, el dragón le entregó el Engranaje de Hierro Real.",
+        "pictograms": ["🎉", "⚙️", "🏰"],
+        "soundCue": "celebration"
+      }
+    ]
+  },
+  "escapeRiddle": {
+    "id": "esc-m1",
+    "title": "El Puente Levadizo del Castillo",
+    "storyPrompt": "Para bajar el puente levadizo de madera, responde al acertijo del guardia: \"Tiene corona pero no es rey, tiene espinas pero no es pez, vive en el castillo y protege al reino.\"",
+    "targetQuestion": "¿De qué objeto o personaje se habla?",
+    "expectedAnswer": "Castillo",
+    "audioClue": "La gran fortaleza de piedra: el Cas-ti-llo.",
+    "options": ["Castillo", "Espada", "Dragón", "Caballo"]
+  }
+}

@@ -1,18 +1,18 @@
-﻿// Web Audio API Procedural Sound Synthesizer (100% Offline, Zero external audio assets)
+// Web Audio API Procedural Sound Synthesizer (100% Offline, Zero external audio assets)
 
 class AudioSynthesizer {
   private ctx: AudioContext | null = null;
   private isMuted: boolean = false;
 
   private getContext(): AudioContext | null {
-    if (typeof window === 'undefined') return null;
+    if (typeof window === "undefined") return null;
     if (!this.ctx) {
       const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (AudioCtxClass) {
         this.ctx = new AudioCtxClass();
       }
     }
-    if (this.ctx && this.ctx.state === 'suspended') {
+    if (this.ctx && this.ctx.state === "suspended") {
       this.ctx.resume().catch(() => {});
     }
     return this.ctx;
@@ -27,7 +27,7 @@ class AudioSynthesizer {
   }
 
   // Prehistoric Drum Beat for Syllable Clapping
-  public playDrum(type: 'low' | 'high' | 'snare' = 'low') {
+  public playDrum(type: "low" | "high" | "snare" = "low") {
     if (this.isMuted) return;
     const ctx = this.getContext();
     if (!ctx) return;
@@ -36,11 +36,11 @@ class AudioSynthesizer {
     const gain = ctx.createGain();
     const now = ctx.currentTime;
 
-    const startFreq = type === 'low' ? 120 : type === 'high' ? 180 : 220;
-    const endFreq = type === 'low' ? 45 : type === 'high' ? 70 : 90;
-    const duration = type === 'low' ? 0.35 : 0.25;
+    const startFreq = type === "low" ? 120 : type === "high" ? 180 : 220;
+    const endFreq = type === "low" ? 45 : type === "high" ? 70 : 90;
+    const duration = type === "low" ? 0.35 : 0.25;
 
-    osc.type = 'triangle';
+    osc.type = "triangle";
     osc.frequency.setValueAtTime(startFreq, now);
     osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
@@ -67,7 +67,7 @@ class AudioSynthesizer {
     const gain = ctx.createGain();
     const now = ctx.currentTime;
 
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(freq, now);
 
     gain.gain.setValueAtTime(0.4, now);
@@ -92,7 +92,7 @@ class AudioSynthesizer {
         const gain = ctx.createGain();
         const now = ctx.currentTime;
 
-        osc.type = 'triangle';
+        osc.type = "triangle";
         osc.frequency.setValueAtTime(freq, now);
 
         gain.gain.setValueAtTime(0.35, now);
@@ -117,7 +117,7 @@ class AudioSynthesizer {
     const gain = ctx.createGain();
     const now = ctx.currentTime;
 
-    osc.type = 'square';
+    osc.type = "square";
     osc.frequency.setValueAtTime(800, now);
     osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
 
@@ -131,6 +131,108 @@ class AudioSynthesizer {
     osc.stop(now + 0.05);
   }
 
+  // Maze Step Movement Sound
+  public playStep() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(140, now + 0.05);
+
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.05);
+  }
+
+  // Letter / Item Pick-up in Maze
+  public playCollect() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+      setTimeout(() => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const now = ctx.currentTime;
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }, idx * 40);
+    });
+  }
+
+  // Typing Key Press in Word Writer
+  public playKeyStroke() {
+    if (this.isMuted) return;
+    const ctx = this.getContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(560 + Math.random() * 80, now);
+    osc.frequency.exponentialRampToValueAtTime(280, now + 0.04);
+
+    gain.gain.setValueAtTime(0.1, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.04);
+  }
+
+  // Word Completed in Writer Workshop
+  public playWordComplete() {
+    if (this.isMuted) return;
+    const notes = [440, 554.37, 659.25, 880];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        const ctx = this.getContext();
+        if (!ctx) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const now = ctx.currentTime;
+
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.25);
+      }, idx * 60);
+    });
+  }
+
   // Sci-Fi Portal Warp for Time Jump
   public playPortalWarp() {
     if (this.isMuted) return;
@@ -141,7 +243,7 @@ class AudioSynthesizer {
     const gain = ctx.createGain();
     const now = ctx.currentTime;
 
-    osc.type = 'sawtooth';
+    osc.type = "sawtooth";
     osc.frequency.setValueAtTime(150, now);
     osc.frequency.exponentialRampToValueAtTime(880, now + 0.7);
     osc.frequency.exponentialRampToValueAtTime(220, now + 1.2);
@@ -167,7 +269,7 @@ class AudioSynthesizer {
     const gain = ctx.createGain();
     const now = ctx.currentTime;
 
-    osc.type = 'sine';
+    osc.type = "sine";
     osc.frequency.setValueAtTime(180, now);
     osc.frequency.setValueAtTime(140, now + 0.15);
 
@@ -193,7 +295,7 @@ class AudioSynthesizer {
         const gain = ctx.createGain();
         const now = ctx.currentTime;
 
-        osc.type = 'triangle';
+        osc.type = "triangle";
         osc.frequency.setValueAtTime(freq, now);
 
         gain.gain.setValueAtTime(0.3, now);

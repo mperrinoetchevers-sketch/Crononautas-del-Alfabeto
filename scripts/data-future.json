@@ -1,0 +1,149 @@
+﻿{
+  "id": "future",
+  "name": "Era Espacial & Futuro",
+  "periodLabel": "Año 3050",
+  "icon": "🚀",
+  "themeColor": "pink",
+  "bgGradient": "from-pink-950 via-purple-950 to-slate-950",
+  "badge": "Gran Maestro Crononauta",
+  "artifactName": "Batería Crono-Cuántica",
+  "artifactIcon": "🔋",
+  "description": "¡La estación espacial del futuro! Domina el laberinto cuántico, escribe códigos estelares, comprende historias galácticas y enciende la Máquina del Tiempo.",
+  "pedagogicalFocus": "Comprensión lectora profunda, secuenciación narrativa, ortografía de precisión y autonomía lectora total.",
+  "syllablesWords": [
+    { "id": "f1", "word": "cohete", "syllables": ["co", "he", "te"], "pictogram": "🚀", "category": "Espacio", "hint": "Nave propulsada que viaja a las estrellas" },
+    { "id": "f2", "word": "planeta", "syllables": ["pla", "ne", "ta"], "pictogram": "🪐", "category": "Espacio", "hint": "Cuerpo celeste esférico que gira en órbita" },
+    { "id": "f3", "word": "estrella", "syllables": ["es", "tre", "lla"], "pictogram": "⭐", "category": "Espacio", "hint": "Astro brillante que emite luz propia" },
+    { "id": "f4", "word": "robot", "syllables": ["ro", "bot"], "pictogram": "🤖", "category": "Espacio", "hint": "Compañero mecánico con mente cuántica" },
+    { "id": "f5", "word": "portal", "syllables": ["por", "tal"], "pictogram": "🌀", "category": "Espacio", "hint": "Puerta interdimensional para viajar en el tiempo" },
+    { "id": "f6", "word": "galaxia", "syllables": ["ga", "la", "xia"], "pictogram": "🌌", "category": "Espacio", "hint": "Remolino gigante de millones de sistemas solares" },
+    { "id": "f7", "word": "satélite", "syllables": ["sa", "té", "li", "te"], "pictogram": "🛰️", "category": "Espacio", "hint": "Dispositivo orbital que transmite señales" },
+    { "id": "f8", "word": "astronauta", "syllables": ["as", "tro", "nau", "ta"], "pictogram": "🧑‍🚀", "category": "Espacio", "hint": "Explorador audaz del cosmos" },
+    { "id": "f9", "word": "meteoro", "syllables": ["me", "teo", "ro"], "pictogram": "☄️", "category": "Espacio", "hint": "Roca estelar incandescente que cruza el cielo" },
+    { "id": "f10", "word": "cometa", "syllables": ["co", "me", "ta"], "pictogram": "🌠", "category": "Espacio", "hint": "Cuerpo celeste con una brillante cola luminosa" }
+  ],
+  "intruderChallenges": [
+    {
+      "id": "ic-f1",
+      "instruction": "Encuentra la palabra intrusa que NO pertenece al espacio exterior:",
+      "type": "semantic",
+      "options": [
+        { "text": "Asteroide", "pictogram": "☄️", "isIntruder": false, "reason": "Roca espacial" },
+        { "text": "Astronauta", "pictogram": "🧑‍🚀", "isIntruder": false, "reason": "Viajero del espacio" },
+        { "text": "Submarino", "pictogram": "🛥️", "isIntruder": true, "reason": "¡El submarino viaja bajo las aguas del océano, no en el espacio!" },
+        { "text": "Satélite", "pictogram": "🛰️", "isIntruder": false, "reason": "Orbita la Tierra" }
+      ]
+    },
+    {
+      "id": "ic-f2",
+      "instruction": "Encuentra la palabra intrusa que tiene 4 sílabas (las demás tienen 3):",
+      "type": "orthographic",
+      "options": [
+        { "text": "Co-he-te", "pictogram": "🚀", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "Pla-ne-ta", "pictogram": "🪐", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "Es-tre-lla", "pictogram": "⭐", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "As-tro-nau-ta", "pictogram": "🧑‍🚀", "isIntruder": true, "reason": "¡Astronauta tiene 4 sílabas (as-tro-nau-ta)!" }
+      ]
+    }
+  ],
+  "mazeChallenge": {
+    "id": "maze-f1",
+    "title": "El Laberinto de la Red Cibernética Cuántica",
+    "theme": "future",
+    "targetWord": "ROBOT",
+    "wordPictogram": "🤖",
+    "grid": [
+      "#######",
+      "#S....#",
+      "#.###.#",
+      "#.....#",
+      "#.###.#",
+      "#....E#",
+      "#######"
+    ],
+    "collectibles": [
+      { "id": "col-f1", "letter": "R", "x": 2, "y": 1, "phonemeHint": "Sonido /r/" },
+      { "id": "col-f2", "letter": "O", "x": 5, "y": 1, "phonemeHint": "Vocal /o/" },
+      { "id": "col-f3", "letter": "B", "x": 3, "y": 3, "phonemeHint": "Sonido /b/" },
+      { "id": "col-f4", "letter": "O", "x": 1, "y": 5, "phonemeHint": "Vocal /o/" },
+      { "id": "col-f5", "letter": "T", "x": 4, "y": 5, "phonemeHint": "Sonido /t/" }
+    ],
+    "hint": "Conecta los circuitos cibernéticos, recolecta las letras de R-O-B-O-T y activa el portal."
+  },
+  "pyramidChallenges": [
+    {
+      "id": "pyr-f1",
+      "title": "El Despegue Interestelar",
+      "theme": "Futuro",
+      "secretCodeWord": "GALAXIA",
+      "rewardArtifactPiece": "Chip Cuántico de Navegación",
+      "steps": [
+        { "text": "El cohete" },
+        { "text": "El cohete vuela" },
+        { "text": "El cohete vuela hacia las estrellas" },
+        { "text": "El cohete vuela hacia las estrellas para cruzar el gran portal del tiempo." }
+      ]
+    }
+  ],
+  "writingChallenge": {
+    "id": "write-f1",
+    "title": "Taller de Escritura de la Estación Espacial",
+    "instruction": "Escribe los códigos estelares para encender la computadora de salto temporal:",
+    "words": [
+      { "id": "wf1", "word": "ROBOT", "syllables": ["RO", "BOT"], "pictogram": "🤖", "hint": "Compañero cibernético inteligente", "audioClue": "Ro-bot" },
+      { "id": "wf2", "word": "COHETE", "syllables": ["CO", "HE", "TE"], "pictogram": "🚀", "hint": "Nave espacial de propulsión estelar", "audioClue": "Co-he-te" },
+      { "id": "wf3", "word": "PLANETA", "syllables": ["PLA", "NE", "TA"], "pictogram": "🪐", "hint": "Mundo esférico en el cosmos", "audioClue": "Pla-ne-ta" },
+      { "id": "wf4", "word": "PORTAL", "syllables": ["POR", "TAL"], "pictogram": "🌀", "hint": "Vórtice para saltar en el hiperespacio", "audioClue": "Por-tal" },
+      { "id": "wf5", "word": "GALAXIA", "syllables": ["GA", "LA", "XIA"], "pictogram": "🌌", "hint": "Millones de mundos y estrellas juntos", "audioClue": "Ga-la-xia" }
+    ]
+  },
+  "kamishibaiStory": {
+    "id": "kami-f1",
+    "title": "El Regreso Triunfal de los Crononautas",
+    "eraId": "future",
+    "moral": "Aprender a leer abre las puertas de todos los mundos y tiempos del universo.",
+    "cards": [
+      {
+        "id": "kc-f1",
+        "sequenceIndex": 1,
+        "title": "La tormenta temporal superada",
+        "narrativeText": "Los exploradores reunieron los 5 artefactos legendarios a través de todas las épocas de la historia.",
+        "pictograms": ["⭐", "💎", "🧭"],
+        "soundCue": "chime"
+      },
+      {
+        "id": "kc-f2",
+        "sequenceIndex": 2,
+        "title": "El encendido de la máquina",
+        "narrativeText": "Cronobot colocó la Batería Cuántica y el portal del tiempo brilló con luces multicolores.",
+        "pictograms": ["🤖", "🔋", "🌀"],
+        "soundCue": "portal"
+      },
+      {
+        "id": "kc-f3",
+        "sequenceIndex": 3,
+        "title": "El viaje de regreso a casa",
+        "narrativeText": "Viajaron a la velocidad de las palabras cruzando galaxias y constelaciones infinitas.",
+        "pictograms": ["🚀", "🌌", "✨"],
+        "soundCue": "drum"
+      },
+      {
+        "id": "kc-f4",
+        "sequenceIndex": 4,
+        "title": "La medalla del gran lector",
+        "narrativeText": "Llegaron sanos y salvos a su hogar coronados como Maestros Crononautas del Alfabeto.",
+        "pictograms": ["🏆", "👑", "🎉"],
+        "soundCue": "celebration"
+      }
+    ]
+  },
+  "escapeRiddle": {
+    "id": "esc-f1",
+    "title": "El Código Final del Hiperimpulsor",
+    "storyPrompt": "Para iniciar la secuencia de salto temporal de regreso a casa, completa la palabra clave: \"CO - HE - _______\"",
+    "targetQuestion": "¿Qué sílaba completa la palabra \"COHETE\"?",
+    "expectedAnswer": "TE",
+    "audioClue": "CO (1) - HE (2) - TE (3). ¡Falta la sílaba TE!",
+    "options": ["TE", "TO", "TA", "TU"]
+  }
+}

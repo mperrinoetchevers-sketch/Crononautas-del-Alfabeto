@@ -1,0 +1,149 @@
+﻿{
+  "id": "industrial",
+  "name": "Era Industrial & Invención",
+  "periodLabel": "Año 1880",
+  "icon": "🚂",
+  "themeColor": "purple",
+  "bgGradient": "from-purple-950 via-slate-950 to-zinc-950",
+  "badge": "Maestro Mecánico",
+  "artifactName": "Manómetro de Presión Cuántica",
+  "artifactIcon": "🎛️",
+  "description": "¡Súbete al ferrocarril de vapor! Conoce las primeras fábricas, recorre el laberinto de tuberías, escribe patentes mecánicas y rescata el manómetro.",
+  "pedagogicalFocus": "Comprensión de oraciones compuestas, vocabulario técnico temprano, discriminación visual y secuenciación lógica.",
+  "syllablesWords": [
+    { "id": "i1", "word": "tren", "syllables": ["tren"], "pictogram": "🚂", "category": "Industrial", "hint": "Vehículo potente que corre sobre vías de acero" },
+    { "id": "i2", "word": "vapor", "syllables": ["va", "por"], "pictogram": "💨", "category": "Industrial", "hint": "Gas blanco que impulsa los pistones con calor" },
+    { "id": "i3", "word": "máquina", "syllables": ["má", "qui", "na"], "pictogram": "🏭", "category": "Industrial", "hint": "Conjunto de piezas mecánicas que realizan trabajo" },
+    { "id": "i4", "word": "engranaje", "syllables": ["en", "gra", "na", "je"], "pictogram": "⚙️", "category": "Industrial", "hint": "Rueda con dientes de metal que transmite movimiento" },
+    { "id": "i5", "word": "telégrafo", "syllables": ["te", "lé", "gra", "fo"], "pictogram": "📠", "category": "Industrial", "hint": "Aparato que envía mensajes eléctricos a distancia" },
+    { "id": "i6", "word": "invento", "syllables": ["in", "ven", "to"], "pictogram": "💡", "category": "Industrial", "hint": "Nueva creación brillante y útil para la humanidad" },
+    { "id": "i7", "word": "carbón", "syllables": ["car", "bón"], "pictogram": "🪨", "category": "Industrial", "hint": "Mineral negro combustible que alimenta la caldera" },
+    { "id": "i8", "word": "motor", "syllables": ["mo", "tor"], "pictogram": "🏎️", "category": "Industrial", "hint": "Corazón mecánico que produce la fuerza motriz" },
+    { "id": "i9", "word": "fábrica", "syllables": ["fá", "bri", "ca"], "pictogram": "🏗️", "category": "Industrial", "hint": "Edificio donde se producen los nuevos inventos" },
+    { "id": "i10", "word": "rieles", "syllables": ["rie", "les"], "pictogram": "🛤️", "category": "Industrial", "hint": "Barras paralelas de metal por donde rueda el tren" }
+  ],
+  "intruderChallenges": [
+    {
+      "id": "ic-i1",
+      "instruction": "Encuentra la palabra intrusa que NO tiene que ver con máquinas de vapor:",
+      "type": "semantic",
+      "options": [
+        { "text": "Engranaje", "pictogram": "⚙️", "isIntruder": false, "reason": "Pieza de máquina" },
+        { "text": "Vapor", "pictogram": "💨", "isIntruder": false, "reason": "Energía motriz" },
+        { "text": "Manzana", "pictogram": "🍎", "isIntruder": true, "reason": "¡La manzana es una fruta deliciosa, no un mecanismo!" },
+        { "text": "Motor", "pictogram": "🏎️", "isIntruder": false, "reason": "Impulso mecánico" }
+      ]
+    },
+    {
+      "id": "ic-i2",
+      "instruction": "Encuentra la palabra intrusa que es monosílaba (1 sola sílaba):",
+      "type": "orthographic",
+      "options": [
+        { "text": "Va-por", "pictogram": "💨", "isIntruder": false, "reason": "Tiene 2 sílabas" },
+        { "text": "Mo-tor", "pictogram": "🏎️", "isIntruder": false, "reason": "Tiene 2 sílabas" },
+        { "text": "Car-bón", "pictogram": "🪨", "isIntruder": false, "reason": "Tiene 2 sílabas" },
+        { "text": "Tren", "pictogram": "🚂", "isIntruder": true, "reason": "¡Tren se pronuncia de un solo golpe (1 sílaba)!" }
+      ]
+    }
+  ],
+  "mazeChallenge": {
+    "id": "maze-i1",
+    "title": "El Laberinto del Taller de Engranajes",
+    "theme": "industrial",
+    "targetWord": "VAPOR",
+    "wordPictogram": "💨",
+    "grid": [
+      "#######",
+      "#S....#",
+      "#.###.#",
+      "#.....#",
+      "#.###.#",
+      "#....E#",
+      "#######"
+    ],
+    "collectibles": [
+      { "id": "col-i1", "letter": "V", "x": 2, "y": 1, "phonemeHint": "Sonido /v/" },
+      { "id": "col-i2", "letter": "A", "x": 5, "y": 1, "phonemeHint": "Vocal /a/" },
+      { "id": "col-i3", "letter": "P", "x": 3, "y": 3, "phonemeHint": "Sonido /p/" },
+      { "id": "col-i4", "letter": "O", "x": 1, "y": 5, "phonemeHint": "Vocal /o/" },
+      { "id": "col-i5", "letter": "R", "x": 4, "y": 5, "phonemeHint": "Sonido /r/" }
+    ],
+    "hint": "Cruza la fábrica de tuberías, junta las letras de V-A-P-O-R y llega a la estación."
+  },
+  "pyramidChallenges": [
+    {
+      "id": "pyr-i1",
+      "title": "El Expreso a Vapor del Tiempo",
+      "theme": "Industrial",
+      "secretCodeWord": "ENGRANAJE",
+      "rewardArtifactPiece": "Manómetro de Presión",
+      "steps": [
+        { "text": "La locomotora" },
+        { "text": "La locomotora avanza" },
+        { "text": "La locomotora avanza sobre los rieles" },
+        { "text": "La locomotora avanza sobre los rieles impulsada por vapor y engranajes dorados." }
+      ]
+    }
+  ],
+  "writingChallenge": {
+    "id": "write-i1",
+    "title": "Taller de Escritura del Gran Inventor",
+    "instruction": "Escribe las palabras de las máquinas para registrar la patente de los inventos:",
+    "words": [
+      { "id": "wi1", "word": "VAPOR", "syllables": ["VA", "POR"], "pictogram": "💨", "hint": "Gas blanco que mueve la locomotora", "audioClue": "Va-por" },
+      { "id": "wi2", "word": "TREN", "syllables": ["TREN"], "pictogram": "🚂", "hint": "Máquina que viaja sobre rieles", "audioClue": "Tren" },
+      { "id": "wi3", "word": "MOTOR", "syllables": ["MO", "TOR"], "pictogram": "🏎️", "hint": "Mecanismo que produce la fuerza motriz", "audioClue": "Mo-tor" },
+      { "id": "wi4", "word": "INVENTO", "syllables": ["IN", "VEN", "TO"], "pictogram": "💡", "hint": "Creación nueva e ingeniosa", "audioClue": "In-ven-to" },
+      { "id": "wi5", "word": "MAQUINA", "syllables": ["MA", "QUI", "NA"], "pictogram": "🏭", "hint": "Aparato compuesto de engranajes y ruedas", "audioClue": "Má-qui-na" }
+    ]
+  },
+  "kamishibaiStory": {
+    "id": "kami-i1",
+    "title": "El Telégrafo que Salvó la Estación",
+    "eraId": "industrial",
+    "moral": "La comunicación clara y la lectura rápida unen a las personas y resuelven problemas.",
+    "cards": [
+      {
+        "id": "kc-i1",
+        "sequenceIndex": 1,
+        "title": "El inventor en su taller",
+        "narrativeText": "El joven inventor Tomás ajustaba las tuercas de su gran telégrafo a vapor.",
+        "pictograms": ["👨‍🔧", "⚙️", "💡"],
+        "soundCue": "chime"
+      },
+      {
+        "id": "kc-i2",
+        "sequenceIndex": 2,
+        "title": "El mensaje urgente de la vía",
+        "narrativeText": "El telégrafo comenzó a sonar: ¡bip bip bip! Había una rama en la vía del tren.",
+        "pictograms": ["📠", "⚠️", "🚂"],
+        "soundCue": "drum"
+      },
+      {
+        "id": "kc-i3",
+        "sequenceIndex": 3,
+        "title": "El mensaje leído a tiempo",
+        "narrativeText": "Tomás leyó el mensaje en voz alta y activó la palanca de freno de la estación.",
+        "pictograms": ["📖", "📢", "🛑"],
+        "soundCue": "portal"
+      },
+      {
+        "id": "kc-i4",
+        "sequenceIndex": 4,
+        "title": "El tren seguro en su destino",
+        "narrativeText": "El tren se detuvo a tiempo y todos los pasajeros aplaudieron la rápida lectura de Tomás.",
+        "pictograms": ["🎉", "🚂", "👏"],
+        "soundCue": "celebration"
+      }
+    ]
+  },
+  "escapeRiddle": {
+    "id": "esc-i1",
+    "title": "La Válvula de Presión Principal",
+    "storyPrompt": "Para liberar la válvula de vapor, lee la oración incompleta: \"El tren viaja rápido por las _______ de hierro.\"",
+    "targetQuestion": "¿Qué palabra falta para completar la oración?",
+    "expectedAnswer": "Vías",
+    "audioClue": "Son los rieles de metal por donde andan los trenes: las ví-as.",
+    "options": ["Vías", "Nubes", "Sillas", "Cucharas"]
+  }
+}

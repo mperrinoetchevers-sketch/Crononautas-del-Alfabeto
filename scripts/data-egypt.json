@@ -1,0 +1,149 @@
+﻿{
+  "id": "egypt",
+  "name": "Antiguo Egipto & Jeroglíficos",
+  "periodLabel": "Año 2500 a.C.",
+  "icon": "🏛️",
+  "themeColor": "amber",
+  "bgGradient": "from-amber-950 via-yellow-950 to-slate-950",
+  "badge": "Descifrador de Jeroglíficos",
+  "artifactName": "Papiro del Tiempo Dorado",
+  "artifactIcon": "📜",
+  "description": "¡Desembarca junto al río Nilo! Descifra los símbolos de las pirámides, recorre laberintos de arena, escribe palabras sagradas y halla el papiro dorado.",
+  "pedagogicalFocus": "Lectura de palabras bisílabas y polisílabas, ortografía de palabras con acentos y comprensión de pistas contextuales.",
+  "syllablesWords": [
+    { "id": "e1", "word": "arena", "syllables": ["a", "re", "na"], "pictogram": "🏜️", "category": "Egipto", "hint": "Cubre todo el gran desierto" },
+    { "id": "e2", "word": "momia", "syllables": ["mo", "mia"], "pictogram": "📜", "category": "Egipto", "hint": "Envuelto en telas antiguas en la tumba" },
+    { "id": "e3", "word": "pirámide", "syllables": ["pi", "rá", "mi", "de"], "pictogram": "🏛️", "category": "Egipto", "hint": "Monumento triangular de piedra colosal" },
+    { "id": "e4", "word": "faraón", "syllables": ["fa", "ra", "ón"], "pictogram": "👑", "category": "Egipto", "hint": "Rey supremo y gobernante del Nilo" },
+    { "id": "e5", "word": "tesoro", "syllables": ["te", "so", "ro"], "pictogram": "💎", "category": "Egipto", "hint": "Joyas y cofres dorados escondidos" },
+    { "id": "e6", "word": "escarabajo", "syllables": ["es", "ca", "ra", "ba", "jo"], "pictogram": "🪲", "category": "Egipto", "hint": "Amuleto sagrado protector de oro" },
+    { "id": "e7", "word": "papiro", "syllables": ["pa", "pi", "ro"], "pictogram": "📄", "category": "Egipto", "hint": "Lámina vegetal usada para escribir" },
+    { "id": "e8", "word": "esfinge", "syllables": ["es", "fin", "ge"], "pictogram": "🗿", "category": "Egipto", "hint": "Estatua gigante con cuerpo de león" },
+    { "id": "e9", "word": "templo", "syllables": ["tem", "plo"], "pictogram": "⛩️", "category": "Egipto", "hint": "Lugar sagrado de columnas doradas" },
+    { "id": "e10", "word": "oasis", "syllables": ["o", "a", "sis"], "pictogram": "🌴", "category": "Egipto", "hint": "Manantial de agua fresca y palmeras" }
+  ],
+  "intruderChallenges": [
+    {
+      "id": "ic-e1",
+      "instruction": "Encuentra la palabra intrusa que NO pertenece al desierto de Egipto:",
+      "type": "semantic",
+      "options": [
+        { "text": "Pirámide", "pictogram": "🏛️", "isIntruder": false, "reason": "Monumento egipcio" },
+        { "text": "Faraón", "pictogram": "👑", "isIntruder": false, "reason": "Gobernante egipcio" },
+        { "text": "Pingüino", "pictogram": "🐧", "isIntruder": true, "reason": "¡Los pingüinos viven en el hielo polar, no en el desierto!" },
+        { "text": "Arena", "pictogram": "🏜️", "isIntruder": false, "reason": "Elemento del desierto" }
+      ]
+    },
+    {
+      "id": "ic-e2",
+      "instruction": "Encuentra la palabra intrusa que tiene 4 sílabas (las demás tienen 3):",
+      "type": "orthographic",
+      "options": [
+        { "text": "A-re-na", "pictogram": "🏜️", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "Te-so-ro", "pictogram": "💎", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "Pa-pi-ro", "pictogram": "📄", "isIntruder": false, "reason": "Tiene 3 sílabas" },
+        { "text": "Pi-rá-mi-de", "pictogram": "🏛️", "isIntruder": true, "reason": "¡Pirámide tiene 4 sílabas (pi-rá-mi-de)!" }
+      ]
+    }
+  ],
+  "mazeChallenge": {
+    "id": "maze-e1",
+    "title": "El Laberinto de los Pasadizos Secretos",
+    "theme": "egypt",
+    "targetWord": "MOMIA",
+    "wordPictogram": "📜",
+    "grid": [
+      "#######",
+      "#S....#",
+      "#.###.#",
+      "#.....#",
+      "#.###.#",
+      "#....E#",
+      "#######"
+    ],
+    "collectibles": [
+      { "id": "col-e1", "letter": "M", "x": 2, "y": 1, "phonemeHint": "Sonido /m/" },
+      { "id": "col-e2", "letter": "O", "x": 5, "y": 1, "phonemeHint": "Vocal /o/" },
+      { "id": "col-e3", "letter": "M", "x": 3, "y": 3, "phonemeHint": "Sonido /m/" },
+      { "id": "col-e4", "letter": "I", "x": 1, "y": 5, "phonemeHint": "Vocal /i/" },
+      { "id": "col-e5", "letter": "A", "x": 4, "y": 5, "phonemeHint": "Vocal /a/" }
+    ],
+    "hint": "Recorre los pasillos dorados de la pirámide, junta las letras de M-O-M-I-A y cruza el portal."
+  },
+  "pyramidChallenges": [
+    {
+      "id": "pyr-e1",
+      "title": "El Secreto de la Gran Pirámide",
+      "theme": "Egipto",
+      "secretCodeWord": "JEROGLIFICO",
+      "rewardArtifactPiece": "Sello del Escarabajo",
+      "steps": [
+        { "text": "La arena" },
+        { "text": "La arena cubre" },
+        { "text": "La arena cubre el templo" },
+        { "text": "La arena cubre el templo sagrado del faraón dorado." }
+      ]
+    }
+  ],
+  "writingChallenge": {
+    "id": "write-e1",
+    "title": "Taller de Escritura en Papiro Real",
+    "instruction": "Escribe las palabras sagradas del Antiguo Egipto usando las letras del escriba:",
+    "words": [
+      { "id": "we1", "word": "MOMIA", "syllables": ["MO", "MIA"], "pictogram": "📜", "hint": "Envuelto en telas milenarias", "audioClue": "Mo-mia" },
+      { "id": "we2", "word": "ARENA", "syllables": ["A", "RE", "NA"], "pictogram": "🏜️", "hint": "Grano dorado del desierto", "audioClue": "A-re-na" },
+      { "id": "we3", "word": "FARAON", "syllables": ["FA", "RA", "ON"], "pictogram": "👑", "hint": "Rey poderoso de Egipto", "audioClue": "Fa-ra-ón" },
+      { "id": "we4", "word": "TESORO", "syllables": ["TE", "SO", "RO"], "pictogram": "💎", "hint": "Cofre repleto de oro y gemas", "audioClue": "Te-so-ro" },
+      { "id": "we5", "word": "PAPIRO", "syllables": ["PA", "PI", "RO"], "pictogram": "📄", "hint": "Papel antiguo de juncos del Nilo", "audioClue": "Pa-pi-ro" }
+    ]
+  },
+  "kamishibaiStory": {
+    "id": "kami-e1",
+    "title": "El Escarabajo de Oro y el Papiro Sagrado",
+    "eraId": "egypt",
+    "moral": "Descifrar y leer los símbolos antiguos nos llena de sabiduría.",
+    "cards": [
+      {
+        "id": "kc-e1",
+        "sequenceIndex": 1,
+        "title": "El escriba en el Nilo",
+        "narrativeText": "A orillas del río Nilo, el joven escriba leía pergaminos bajo la sombra de las palmeras.",
+        "pictograms": ["🏜️", "🌊", "📄"],
+        "soundCue": "chime"
+      },
+      {
+        "id": "kc-e2",
+        "sequenceIndex": 2,
+        "title": "La puerta de la pirámide",
+        "narrativeText": "Encontró una puerta secreta custodiada por un escarabajo de ojos de esmeralda.",
+        "pictograms": ["🏛️", "🪲", "🔒"],
+        "soundCue": "drum"
+      },
+      {
+        "id": "kc-e3",
+        "sequenceIndex": 3,
+        "title": "La lectura del jeroglífico",
+        "narrativeText": "Leyó en voz alta los tres símbolos dorados y la gran piedra de entrada se abrió.",
+        "pictograms": ["✨", "📜", "🗝️"],
+        "soundCue": "portal"
+      },
+      {
+        "id": "kc-e4",
+        "sequenceIndex": 4,
+        "title": "El Papiro del Tiempo",
+        "narrativeText": "En el centro de la sala brillaba el Papiro del Tiempo Dorado listo para los Crononautas.",
+        "pictograms": ["🏆", "📜", "👑"],
+        "soundCue": "celebration"
+      }
+    ]
+  },
+  "escapeRiddle": {
+    "id": "esc-e1",
+    "title": "La Puerta Secreta del Faraón",
+    "storyPrompt": "Para abrir el sarcófago dorado, descubre la palabra oculta: \"Guardián de piedra con cuerpo de león y cabeza humana\".",
+    "targetQuestion": "¿Cómo se llama esta gran estatua egipcia?",
+    "expectedAnswer": "Esfinge",
+    "audioClue": "Comienza con Es- y termina con -finge: Es-fin-ge.",
+    "options": ["Esfinge", "Pirámide", "Momia", "Camello"]
+  }
+}

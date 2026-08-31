@@ -1,30 +1,39 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, use } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Sparkles, Star, Trophy, CheckCircle2 } from 'lucide-react';
-import TimePortalCanvas from '@/components/TimePortalCanvas';
-import AudioController from '@/components/AudioController';
-import CronobotCompanion from '@/components/CronobotCompanion';
-import SyllableDrums from '@/components/minigames/SyllableDrums';
-import IntruderWords from '@/components/minigames/IntruderWords';
-import PyramidReader from '@/components/minigames/PyramidReader';
-import KamishibaiTheater from '@/components/minigames/KamishibaiTheater';
-import EscapeRoomMission from '@/components/minigames/EscapeRoomMission';
-import StarCelebration from '@/components/ui/StarCelebration';
-import { getEraById, GAME_ERAS } from '@/lib/game-data';
+import { ArrowLeft, Sparkles, CheckCircle2 } from 'lucide-react';
+import { getEraById } from '@/lib/game-data';
 import { storage } from '@/lib/storage';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
 
-type GameStage = 'drums' | 'intruder' | 'pyramid' | 'kamishibai' | 'escape';
+import SyllableDrums from '@/components/minigames/SyllableDrums';
+import IntruderWords from '@/components/minigames/IntruderWords';
+import ChronosMaze from '@/components/minigames/ChronosMaze';
+import PyramidReader from '@/components/minigames/PyramidReader';
+import WordWriterWorkshop from '@/components/minigames/WordWriterWorkshop';
+import KamishibaiTheater from '@/components/minigames/KamishibaiTheater';
+import EscapeRoomMission from '@/components/minigames/EscapeRoomMission';
 
-export default function PlayEraPage() {
-  const params = useParams();
+import TimePortalCanvas from '@/components/TimePortalCanvas';
+import AudioController from '@/components/AudioController';
+import CronobotCompanion from '@/components/CronobotCompanion';
+import StarCelebration from '@/components/ui/StarCelebration';
+
+type GameStage = 'drums' | 'intruder' | 'maze' | 'pyramid' | 'writer' | 'kamishibai' | 'escape';
+
+interface PageProps {
+  params: Promise<{
+    eraId: string;
+  }>;
+}
+
+export default function EraPlayPage({ params }: PageProps) {
+  const resolvedParams = use(params);
   const router = useRouter();
-  const eraId = Array.isArray(params.eraId) ? params.eraId[0] : params.eraId;
-  const era = getEraById(eraId || 'prehistory') || GAME_ERAS[0];
+  const era = getEraById(resolvedParams.eraId);
 
   const [currentStage, setCurrentStage] = useState<GameStage>('drums');
   const [completedStages, setCompletedStages] = useState<GameStage[]>([]);
@@ -49,11 +58,26 @@ export default function PlayEraPage() {
     future: 'future',
   };
 
-  const nextEraId = nextEraMap[era.id];
+  const nextEraId = era ? nextEraMap[era.id] : 'prehistory';
 
   useEffect(() => {
-    tts.speak(`Has llegado a ${era.name}. ¡Comencemos con el ritmo de las sílabas!`);
+    if (era) {
+      tts.speak(`Has llegado a ${era.name}. ¡Comencemos con el ritmo de las sílabas!`);
+    }
   }, [era]);
+
+  if (!era) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white p-4">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-bold">Época no encontrada</h2>
+          <Link href="/map" className="px-4 py-2 bg-indigo-600 rounded-xl font-bold text-sm">
+            Volver al Mapa
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleStageComplete = (stageName: GameStage, starsEarned: number) => {
     audioSynth.playCelebration();
@@ -68,9 +92,15 @@ export default function PlayEraPage() {
       setCurrentStage('intruder');
     } else if (stageName === 'intruder') {
       if (profile) storage.recordLevelCompletion(profile.id, `${era.id}_intruder`, starsEarned);
+      setCurrentStage('maze');
+    } else if (stageName === 'maze') {
+      if (profile) storage.recordLevelCompletion(profile.id, `${era.id}_maze`, starsEarned);
       setCurrentStage('pyramid');
     } else if (stageName === 'pyramid') {
       if (profile) storage.recordLevelCompletion(profile.id, `${era.id}_pyramid`, starsEarned);
+      setCurrentStage('writer');
+    } else if (stageName === 'writer') {
+      if (profile) storage.recordLevelCompletion(profile.id, `${era.id}_writer`, starsEarned);
       setCurrentStage('kamishibai');
     } else if (stageName === 'kamishibai') {
       if (profile) storage.recordLevelCompletion(profile.id, `${era.id}_kamishibai`, starsEarned);
@@ -103,9 +133,11 @@ export default function PlayEraPage() {
   const stagesList: { id: GameStage; label: string; icon: string }[] = [
     { id: 'drums', label: '1. Sílabas & Ritmo', icon: '🥁' },
     { id: 'intruder', label: '2. Palabras Intrusas', icon: '🔍' },
-    { id: 'pyramid', label: '3. Lectura Pirámide', icon: '📐' },
-    { id: 'kamishibai', label: '4. Teatro Kamishibai', icon: '🎭' },
-    { id: 'escape', label: '5. Escape Room', icon: '🗝️' },
+    { id: 'maze', label: '3. Crono-Laberinto', icon: '🌀' },
+    { id: 'pyramid', label: '4. Lectura Pirámide', icon: '📐' },
+    { id: 'writer', label: '5. Taller Escritura', icon: '✍️' },
+    { id: 'kamishibai', label: '6. Gran Teatro', icon: '🎭' },
+    { id: 'escape', label: '7. Escape Room', icon: '🗝️' },
   ];
 
   return (
@@ -146,7 +178,7 @@ export default function PlayEraPage() {
       </header>
 
       {/* Stage Progress Pills */}
-      <div className="relative z-10 max-w-4xl mx-auto w-full flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap py-2">
+      <div className="relative z-10 max-w-5xl mx-auto w-full flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap py-2">
         {stagesList.map((stg) => {
           const isDone = completedStages.includes(stg.id);
           const isCurrent = currentStage === stg.id;
@@ -190,10 +222,25 @@ export default function PlayEraPage() {
           />
         )}
 
+        {currentStage === 'maze' && (
+          <ChronosMaze
+            challenge={era.mazeChallenge}
+            eraThemeColor={era.themeColor}
+            onComplete={(stars) => handleStageComplete('maze', stars)}
+          />
+        )}
+
         {currentStage === 'pyramid' && (
           <PyramidReader
             challenge={era.pyramidChallenges[0]}
             onComplete={(stars) => handleStageComplete('pyramid', stars)}
+          />
+        )}
+
+        {currentStage === 'writer' && (
+          <WordWriterWorkshop
+            challenge={era.writingChallenge}
+            onComplete={(stars) => handleStageComplete('writer', stars)}
           />
         )}
 
@@ -217,7 +264,7 @@ export default function PlayEraPage() {
       {/* Companion Footer Drawer */}
       <div className="relative z-10 max-w-3xl mx-auto w-full pt-2">
         <CronobotCompanion
-          message={`¡Estás en ${era.name}! Completa los 5 desafíos para conseguir el ${era.artifactName} y reparar la máquina del tiempo.`}
+          message={`¡Estás en ${era.name}! Supera las 7 misiones (incluyendo el Crono-Laberinto y el Taller de Escritura) para conseguir el ${era.artifactName}.`}
           expression="happy"
         />
       </div>

@@ -1,0 +1,149 @@
+﻿{
+  "id": "prehistory",
+  "name": "Prehistoria & Dinosaurios",
+  "periodLabel": "Hace 65 millones de años",
+  "icon": "🦖",
+  "themeColor": "emerald",
+  "bgGradient": "from-emerald-950 via-teal-950 to-slate-950",
+  "badge": "Cazador de Sílabas",
+  "artifactName": "Cristal Fósil de Ámbar",
+  "artifactIcon": "💎",
+  "description": "¡Viaja a la era de los dinosaurios! Explora cavernas, supera laberintos de lava, escribe palabras rupestres y rescata el cristal fósil.",
+  "pedagogicalFocus": "Conciencia fonológica, segmentación silábica (2 a 4 sílabas), navegación espacial y escritura de palabras clave.",
+  "syllablesWords": [
+    { "id": "p1", "word": "fósil", "syllables": ["fó", "sil"], "pictogram": "🦴", "category": "Prehistoria", "hint": "Resto antiguo convertido en roca" },
+    { "id": "p2", "word": "volcán", "syllables": ["vol", "cán"], "pictogram": "🌋", "category": "Prehistoria", "hint": "Montaña que expulsa lava y fuego" },
+    { "id": "p3", "word": "cueva", "syllables": ["cue", "va"], "pictogram": "🛖", "category": "Prehistoria", "hint": "Refugio de piedra natural" },
+    { "id": "p4", "word": "mamut", "syllables": ["ma", "mut"], "pictogram": "🦣", "category": "Animales", "hint": "Elefante lanudo gigante del pasado" },
+    { "id": "p5", "word": "fuego", "syllables": ["fue", "go"], "pictogram": "🔥", "category": "Prehistoria", "hint": "Descubrimiento que brinda luz y calor" },
+    { "id": "p6", "word": "dinosaurio", "syllables": ["di", "no", "sau", "rio"], "pictogram": "🦕", "category": "Dinosaurios", "hint": "Gran reptil de la era mesozoica" },
+    { "id": "p7", "word": "roca", "syllables": ["ro", "ca"], "pictogram": "🪨", "category": "Prehistoria", "hint": "Piedra sólida y resistente" },
+    { "id": "p8", "word": "huevo", "syllables": ["hue", "vo"], "pictogram": "🥚", "category": "Dinosaurios", "hint": "Nido donde nacen los pequeños reptiles" },
+    { "id": "p9", "word": "planta", "syllables": ["plan", "ta"], "pictogram": "🌿", "category": "Prehistoria", "hint": "Alimento de dinosaurios herbívoros" },
+    { "id": "p10", "word": "huella", "syllables": ["hue", "lla"], "pictogram": "🐾", "category": "Dinosaurios", "hint": "Pisada gigante marcada en el barro" }
+  ],
+  "intruderChallenges": [
+    {
+      "id": "ic-p1",
+      "instruction": "Encuentra el objeto intruso que NO existía en la era de los dinosaurios:",
+      "type": "semantic",
+      "options": [
+        { "text": "Mamut", "pictogram": "🦣", "isIntruder": false, "reason": "Animal de la prehistoria" },
+        { "text": "Fósil", "pictogram": "🦴", "isIntruder": false, "reason": "Resto prehistórico" },
+        { "text": "Teléfono", "pictogram": "📱", "isIntruder": true, "reason": "¡Los teléfonos se inventaron millones de años después!" },
+        { "text": "Volcán", "pictogram": "🌋", "isIntruder": false, "reason": "Formación natural prehistórica" }
+      ]
+    },
+    {
+      "id": "ic-p2",
+      "instruction": "Encuentra la palabra intrusa que NO empieza con la letra F:",
+      "type": "orthographic",
+      "options": [
+        { "text": "Fósil", "pictogram": "🦴", "isIntruder": false, "reason": "Empieza con F" },
+        { "text": "Fuego", "pictogram": "🔥", "isIntruder": false, "reason": "Empieza con F" },
+        { "text": "Cueva", "pictogram": "🛖", "isIntruder": true, "reason": "¡Cueva empieza con la letra C, no con F!" },
+        { "text": "Fauna", "pictogram": "🦖", "isIntruder": false, "reason": "Empieza con F" }
+      ]
+    }
+  ],
+  "mazeChallenge": {
+    "id": "maze-p1",
+    "title": "El Laberinto de la Cueva Fósil",
+    "theme": "prehistory",
+    "targetWord": "FOSIL",
+    "wordPictogram": "🦴",
+    "grid": [
+      "#######",
+      "#S....#",
+      "#.###.#",
+      "#.....#",
+      "#.###.#",
+      "#....E#",
+      "#######"
+    ],
+    "collectibles": [
+      { "id": "col-p1", "letter": "F", "x": 2, "y": 1, "phonemeHint": "Sonido /f/" },
+      { "id": "col-p2", "letter": "O", "x": 5, "y": 1, "phonemeHint": "Vocal /o/" },
+      { "id": "col-p3", "letter": "S", "x": 3, "y": 3, "phonemeHint": "Sonido /s/" },
+      { "id": "col-p4", "letter": "I", "x": 1, "y": 5, "phonemeHint": "Vocal /i/" },
+      { "id": "col-p5", "letter": "L", "x": 4, "y": 5, "phonemeHint": "Sonido /l/" }
+    ],
+    "hint": "Guía a Cronobot por la cueva, recoge las 5 letras de F-O-S-I-L y llega al portal de salida."
+  },
+  "pyramidChallenges": [
+    {
+      "id": "pyr-p1",
+      "title": "El Valle de los Grandes Reptiles",
+      "theme": "Prehistoria",
+      "secretCodeWord": "DINOSAURIO",
+      "rewardArtifactPiece": "Ámbar Brillante",
+      "steps": [
+        { "text": "El fósil" },
+        { "text": "El fósil brilla" },
+        { "text": "El fósil brilla en la cueva" },
+        { "text": "El fósil brilla en la cueva del gran dinosaurio." }
+      ]
+    }
+  ],
+  "writingChallenge": {
+    "id": "write-p1",
+    "title": "Taller de Escritura Rupestre",
+    "instruction": "Escribe las palabras prehistóricas para grabarlas en el gran mural de la cueva:",
+    "words": [
+      { "id": "wp1", "word": "FOSIL", "syllables": ["FO", "SIL"], "pictogram": "🦴", "hint": "Hueso antiguo petrificado", "audioClue": "Fó-sil" },
+      { "id": "wp2", "word": "MAMUT", "syllables": ["MA", "MUT"], "pictogram": "🦣", "hint": "Elefante lanudo de la era de hielo", "audioClue": "Ma-mut" },
+      { "id": "wp3", "word": "FUEGO", "syllables": ["FUE", "GO"], "pictogram": "🔥", "hint": "Llama que calienta la caverna", "audioClue": "Fue-go" },
+      { "id": "wp4", "word": "CUEVA", "syllables": ["CUE", "VA"], "pictogram": "🛖", "hint": "Refugio rocoso de los primeros humanos", "audioClue": "Cue-va" },
+      { "id": "wp5", "word": "VOLCAN", "syllables": ["VOL", "CAN"], "pictogram": "🌋", "hint": "Montaña que arroja lava encendida", "audioClue": "Vol-cán" }
+    ]
+  },
+  "kamishibaiStory": {
+    "id": "kami-p1",
+    "title": "El Pequeño Rex y el Fósil Perdido",
+    "eraId": "prehistory",
+    "moral": "La curiosidad y la lectura nos ayudan a resolver grandes misterios.",
+    "cards": [
+      {
+        "id": "kc-p1",
+        "sequenceIndex": 1,
+        "title": "El amanecer en el valle",
+        "narrativeText": "En un valle lleno de volcanes, un pequeño dinosaurio encontró una extraña roca brillante.",
+        "pictograms": ["🦖", "🌋", "💎"],
+        "soundCue": "chime"
+      },
+      {
+        "id": "kc-p2",
+        "sequenceIndex": 2,
+        "title": "El misterio de la cueva",
+        "narrativeText": "El pequeño Rex llevó la roca a la cueva oscura para examinarla junto al fuego.",
+        "pictograms": ["🛖", "🔥", "🦴"],
+        "soundCue": "drum"
+      },
+      {
+        "id": "kc-p3",
+        "sequenceIndex": 3,
+        "title": "La huella en la piedra",
+        "narrativeText": "Al frotar la roca, apareció una huella mágica que indicaba el camino secreto.",
+        "pictograms": ["🐾", "✨", "🧭"],
+        "soundCue": "portal"
+      },
+      {
+        "id": "kc-p4",
+        "sequenceIndex": 4,
+        "title": "El cristal del tiempo revelado",
+        "narrativeText": "¡Era el Cristal Fósil de Ámbar! Todos los dinosaurios celebraron el gran descubrimiento.",
+        "pictograms": ["🎉", "💎", "🦖"],
+        "soundCue": "celebration"
+      }
+    ]
+  },
+  "escapeRiddle": {
+    "id": "esc-p1",
+    "title": "La Cripta del T-Rex Guardián",
+    "storyPrompt": "Para abrir el cofre de piedra y rescatar el Cristal de Ámbar, debes completar el nombre del gran reptil: \"DI - NO - SAU - _____\"",
+    "targetQuestion": "¿Qué sílaba completa la palabra \"DINOSAURIO\"?",
+    "expectedAnswer": "RIO",
+    "audioClue": "Escucha con atención: DI - NO - SAU - RIO. ¡Falta RIO!",
+    "options": ["RIO", "RA", "SOL", "PAN"]
+  }
+}
