@@ -2,22 +2,33 @@
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Crononautas del Alfabeto',
+    name: 'Crononautas del Alfabeto - Viaje en el Tiempo',
     short_name: 'Crononautas',
-    description: 'Aventura 2D de alfabetización y viaje en el tiempo para niños',
+    description: 'Videojuego 2D educativo de alfabetización para niños. Aprende sílabas, palabras y oraciones viajando en el tiempo.',
     start_url: '/',
+    id: '/',
+    scope: '/',
     display: 'standalone',
-    background_color: '#0f172a',
+    orientation: 'portrait',
+    background_color: '#020617',
     theme_color: '#4f46e5',
+    categories: ['education', 'games', 'kids'],
     icons: [
       {
         src: '/icon-192.png',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'any',
       },
       {
         src: '/icon-512.png',
         sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
+      },
+      {
+        src: '/apple-touch-icon.png',
+        sizes: '180x180',
         type: 'image/png',
       },
     ],

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Lock, Star, Sparkles, Trophy, Play, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Lock, Star, Sparkles, Trophy, Play, CheckCircle2, Cloud } from 'lucide-react';
 import TimePortalCanvas from '@/components/TimePortalCanvas';
 import AudioController from '@/components/AudioController';
 import ProfileSelector from '@/components/ProfileSelector';
@@ -83,16 +83,23 @@ export default function TimeMapPage() {
             </div>
           </Link>
 
-          {/* Profile Switcher */}
+          {/* Profile Switcher with Cloud Code */}
           <button
             onClick={() => {
               audioSynth.playClick();
               setIsProfileModalOpen(true);
             }}
-            className="flex items-center gap-1.5 bg-slate-800 px-3 py-1.5 rounded-2xl border border-slate-700"
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-2xl border border-slate-700 shadow transition-all"
           >
             <span className="text-lg">{currentAvatar.emoji}</span>
-            <span className="text-xs font-bold text-amber-300 hidden sm:inline">⭐ {progress?.starsTotal || 0}</span>
+            <div className="text-left">
+              <span className="text-xs font-bold text-amber-300 block leading-tight">
+                ⭐ {progress?.starsTotal || 0}
+              </span>
+              <span className="text-[9px] font-mono text-cyan-300 bg-slate-900 px-1 rounded block leading-tight">
+                {profile?.syncCode || 'CRONO'}
+              </span>
+            </div>
           </button>
 
           <AudioController />
