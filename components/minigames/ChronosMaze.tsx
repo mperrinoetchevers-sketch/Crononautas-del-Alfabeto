@@ -16,6 +16,7 @@ interface ChronosMazeProps {
 export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps) {
   // Find start position 'S' and exit position 'E'
   const findCoordinate = useCallback((char: string): { x: number; y: number } => {
+    if (!challenge?.grid) return { x: 1, y: 1 };
     for (let y = 0; y < challenge.grid.length; y++) {
       const row = challenge.grid[y];
       for (let x = 0; x < row.length; x++) {
@@ -28,12 +29,12 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
   const [playerPos, setPlayerPos] = useState<{ x: number; y: number }>({ x: 1, y: 1 });
   const [collectedIds, setCollectedIds] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [playerAvatar, setPlayerAvatar] = useState<string>('🤖');
+  const [playerAvatar, setPlayerAvatar] = useState<string>('🧑‍🚀');
   
   // Chaser Nemesis State
-  const chaserConfig = challenge.chaser || {
+  const chaserConfig = challenge?.chaser || {
     name: 'Guardián del Tiempo',
-    emoji: '👾',
+    emoji: '⏳',
     startX: 5,
     startY: 5,
     moveIntervalMs: 1400,
@@ -55,6 +56,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
 
   // Initialize maze state
   useEffect(() => {
+    if (!challenge) return;
     const start = findCoordinate('S');
     setPlayerPos(start);
     setChaserPos({ x: chaserConfig.startX, y: chaserConfig.startY });
@@ -67,13 +69,13 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
     if (active) {
       const avatarMap: Record<string, string> = {
         rex: '🦖',
-        scout: '🧭',
+        scout: '🔍',
         robot: '🤖',
         knight: '🛡️',
-        astronaut: '🚀',
+        astronaut: '🧑‍🚀',
         wizard: '🧙‍♂️',
       };
-      setPlayerAvatar(avatarMap[active.avatar] || '🤖');
+      setPlayerAvatar(avatarMap[active.avatar] || '🧑‍🚀');
     }
 
     tts.speak(
@@ -105,7 +107,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
 
   // Chaser AI Pathfinding Loop
   useEffect(() => {
-    if (isSuccess) return;
+    if (isSuccess || !challenge?.grid) return;
 
     const interval = setInterval(() => {
       if (isSuccessRef.current) return;
@@ -161,13 +163,14 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
     }, chaserConfig.moveIntervalMs || 1400);
 
     return () => clearInterval(interval);
-  }, [challenge.grid, chaserConfig, isSuccess, handleCaughtByChaser]);
+  }, [challenge?.grid, chaserConfig, isSuccess, handleCaughtByChaser]);
 
-  const allLettersCollected = collectedIds.length === challenge.collectibles.length;
+  const allLettersCollected =
+    Boolean(challenge?.collectibles) && collectedIds.length === challenge.collectibles.length;
 
   const tryMove = useCallback(
     (dx: number, dy: number) => {
-      if (isSuccess) return;
+      if (isSuccess || !challenge?.grid) return;
 
       const newX = playerPos.x + dx;
       const newY = playerPos.y + dy;
@@ -199,7 +202,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
       }
 
       // Check letter pickup
-      const itemOnCell = challenge.collectibles.find(
+      const itemOnCell = challenge.collectibles?.find(
         (c) => c.x === newX && c.y === newY && !collectedIds.includes(c.id)
       );
 
@@ -209,7 +212,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
         setCollectedIds(updatedCollected);
         tts.speak(`¡Letra ${itemOnCell.letter}!`, { rate: 1.1 });
 
-        if (updatedCollected.length === challenge.collectibles.length) {
+        if (challenge.collectibles && updatedCollected.length === challenge.collectibles.length) {
           setTimeout(() => {
             tts.speak(`¡Completaste ${challenge.targetWord}! Ahora dirígete al portal.`);
           }, 800);
@@ -218,17 +221,24 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
 
       // Check exit portal
       if (challenge.grid[newY][newX] === 'E') {
-        if (allLettersCollected || (itemOnCell && collectedIds.length + 1 === challenge.collectibles.length)) {
+        if (
+          allLettersCollected ||
+          (itemOnCell && challenge.collectibles && collectedIds.length + 1 === challenge.collectibles.length)
+        ) {
           setIsSuccess(true);
           audioSynth.playCelebration();
-          tts.speak(`¡Increíble! Esquivaste a ${chaserConfig.name}, cruzaste el laberinto y descifraste ${challenge.targetWord}.`);
+          tts.speak(
+            `¡Increíble! Esquivaste a ${chaserConfig.name}, cruzaste el laberinto y descifraste ${challenge.targetWord}.`
+          );
           setTimeout(() => {
             const stars = catchCount === 0 ? 3 : catchCount <= 2 ? 2 : 1;
             onComplete(stars);
           }, 2200);
         } else {
           audioSynth.playError();
-          tts.speak(`Aún te faltan letras para completar la palabra ${challenge.targetWord}. ¡Explora los pasillos!`);
+          tts.speak(
+            `Aún te faltan letras para completar la palabra ${challenge.targetWord}. ¡Explora los pasillos!`
+          );
         }
       }
     },
@@ -272,11 +282,21 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
   };
 
   const handleHearMission = () => {
+    if (!challenge) return;
     audioSynth.playClick();
+    const remaining = (challenge.collectibles?.length || 0) - collectedIds.length;
     tts.speak(
-      `Objetivo: Junta las letras para formar ${challenge.targetWord} y esquiva a ${chaserConfig.name}. Faltan ${challenge.collectibles.length - collectedIds.length} letras.`
+      `Objetivo: Junta las letras para formar ${challenge.targetWord} y esquiva a ${chaserConfig.name}. Faltan ${remaining} letras.`
     );
   };
+
+  if (!challenge) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-slate-900/90 border-2 border-amber-500/40 rounded-3xl text-center text-amber-300 font-bold">
+        Cargando laberinto...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 bg-slate-900/90 border-2 border-amber-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl backdrop-blur-md">
@@ -326,7 +346,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
 
         {/* Letter Chips */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {challenge.collectibles.map((item) => {
+          {challenge.collectibles?.map((item) => {
             const isFound = collectedIds.includes(item.id);
             return (
               <span
@@ -344,7 +364,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
         </div>
 
         <div className="text-xs font-black text-amber-400 bg-amber-950/60 border border-amber-500/30 px-2.5 py-1 rounded-xl">
-          {collectedIds.length} / {challenge.collectibles.length}
+          {collectedIds.length} / {challenge.collectibles?.length || 0}
         </div>
       </div>
 
@@ -357,14 +377,14 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
         }`}
       >
         <div className="grid grid-cols-7 gap-1 sm:gap-1.5 max-w-[340px] sm:max-w-[400px] w-full aspect-square">
-          {challenge.grid.map((rowStr, y) =>
+          {challenge.grid?.map((rowStr, y) =>
             rowStr.split('').map((cellChar, x) => {
               const isWall = cellChar === '#';
               const isPlayer = playerPos.x === x && playerPos.y === y;
               const isChaser = chaserPos.x === x && chaserPos.y === y;
               const isExit = cellChar === 'E';
               const isStart = cellChar === 'S';
-              const itemOnCell = challenge.collectibles.find(
+              const itemOnCell = challenge.collectibles?.find(
                 (c) => c.x === x && c.y === y && !collectedIds.includes(c.id)
               );
 
@@ -445,7 +465,7 @@ export default function ChronosMaze({ challenge, onComplete }: ChronosMazeProps)
             </p>
             <div className="flex items-center gap-1.5 text-emerald-400 font-bold text-sm">
               <CheckCircle2 className="w-5 h-5" />{' '}
-              {catchCount === 0 ? '¡Sin ser atrapado! ⭐⭐⭐' : '¡Misión Cumplida! ⭐⭐'}
+              {catchCount === 0 ? '¡Sin ser atrapado! 🏆' : '¡Misión Cumplida! 🌟'}
             </div>
           </div>
         )}

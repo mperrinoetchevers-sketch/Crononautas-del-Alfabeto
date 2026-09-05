@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Volume2, Sparkles, ArrowLeft, ArrowRight, Mic, MicOff, Radio, CheckCircle2 } from 'lucide-react';
+import { Volume2, Sparkles, ArrowLeft, ArrowRight, Mic, MicOff, Radio } from 'lucide-react';
 import { KamishibaiStory, KamishibaiCard } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
@@ -13,7 +13,9 @@ interface KamishibaiTheaterProps {
 }
 
 export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheaterProps) {
-  const [userSequence, setUserSequence] = useState<KamishibaiCard[]>([]);
+  const [userSequence, setUserSequence] = useState<KamishibaiCard[]>(
+    story?.cards ? [...story.cards] : []
+  );
   const [isOrdered, setIsOrdered] = useState(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
@@ -25,6 +27,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
 
   // Shuffle the cards on load
   useEffect(() => {
+    if (!story?.cards || story.cards.length === 0) return;
     const shuffled = [...story.cards].sort(() => Math.random() - 0.5);
     setUserSequence(shuffled);
     setIsOrdered(false);
@@ -33,7 +36,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     setMatchedIndices(new Set());
     setMicFeedback('');
     tts.speak(
-      `Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.`
+      'Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.'
     );
 
     return () => {
@@ -52,26 +55,28 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
   };
 
   const handleVerifySequence = () => {
+    if (userSequence.length === 0) return;
     const isCorrect = userSequence.every((card, idx) => card.sequenceIndex === idx + 1);
 
     if (isCorrect) {
       setIsOrdered(true);
       audioSynth.playCelebration();
       tts.speak(
-        `¡Excelente! Ordenaste la historia a la perfección. Ahora eres el narrador oficial del Gran Teatro. ¡Lee la lámina completa en voz alta!`
+        '¡Excelente! Ordenaste la historia a la perfección. Ahora eres el narrador oficial del Gran Teatro. ¡Lee la lámina completa en voz alta!'
       );
       setActiveSlideIndex(0);
       setMicFeedback('🎙️ Pulsa "Narrar en Voz Alta" para leer con tu micrófono.');
     } else {
       audioSynth.playError();
-      tts.speak(`Casi lo logras. Revisa el orden de las láminas para que la historia tenga sentido.`);
+      tts.speak('Casi lo logras. Revisa el orden de las láminas para que la historia tenga sentido.');
     }
   };
 
-  const playSlideAudio = (card: KamishibaiCard) => {
+  const playSlideAudio = (card?: KamishibaiCard) => {
+    if (!card?.narrativeText) return;
     stt.stop();
     setIsListening(false);
-    audioSynth.playChime(card.sequenceIndex);
+    audioSynth.playChime(card.sequenceIndex || 1);
     tts.speak(card.narrativeText);
   };
 
@@ -88,7 +93,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     } else {
       // Theater finished!
       audioSynth.playCelebration();
-      tts.speak(`Fin de la historia. ¡Gran trabajo como narrador de ${story.title}!`);
+      tts.speak(`Fin de la historia. ¡Gran trabajo como narrador de ${story?.title || 'la aventura'}!`);
       setTimeout(() => {
         onComplete(3);
       }, 1800);
@@ -108,11 +113,13 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     }
   };
 
-  const currentSlide = userSequence[activeSlideIndex] || userSequence[0];
-  const slideWords = currentSlide.narrativeText.split(' ');
+  const currentSlide: KamishibaiCard | undefined =
+    userSequence[activeSlideIndex] || userSequence[0] || (story?.cards ? story.cards[0] : undefined);
+  const slideWords = currentSlide?.narrativeText ? currentSlide.narrativeText.split(' ') : [];
 
   // Start Mic Narration
   const handleStartMicNarration = () => {
+    if (!currentSlide?.narrativeText) return;
     audioSynth.playClick();
     setSpokenTranscript('');
     setMatchedIndices(new Set());
@@ -123,13 +130,15 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
       onEnd: () => setIsListening(false),
       onTranscript: (text) => {
         setSpokenTranscript(text);
-        const matched = getMatchedWordIndices(currentSlide.narrativeText, text);
-        setMatchedIndices(matched);
+        if (currentSlide?.narrativeText) {
+          const matched = getMatchedWordIndices(currentSlide.narrativeText, text);
+          setMatchedIndices(matched);
+        }
       },
       onMatch: () => {
         setIsListening(false);
         setMatchedIndices(new Set(slideWords.map((_, i) => i)));
-        setMicFeedback('¡Excelente narración completa! ✨ Avanzando...');
+        setMicFeedback('¡Excelente narración completa! 🌟 Avanzando...');
         audioSynth.playCelebration();
         tts.speak('¡Excelente narración!');
         setTimeout(() => {
@@ -147,6 +156,14 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     stt.stop();
     setIsListening(false);
   };
+
+  if (!story || !currentSlide) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-slate-900/90 border-2 border-rose-500/40 rounded-3xl text-center text-rose-300 font-bold">
+        Cargando láminas del teatro...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-5 bg-slate-900/90 border-2 border-rose-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-md">
@@ -168,13 +185,13 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
         /* PHASE 1: SEQUENCING THE CARDS */
         <div className="space-y-4">
           <p className="text-xs text-slate-300 text-center font-medium">
-            Usa las flechas ⬅️ ➡️ para ordenar las 4 láminas (Inicio, Nudo, Clímax y Final):
+            Usa las flechas ⬅️ ➡️ para ordenar las láminas (Inicio, Nudo, Clímax y Final):
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {userSequence.map((card, idx) => (
               <div
-                key={card.id}
+                key={card.id || idx}
                 className="bg-slate-950 border-2 border-slate-700 hover:border-amber-400 p-4 rounded-2xl flex flex-col justify-between space-y-3 shadow-md"
               >
                 <div className="flex items-center justify-between">
@@ -182,7 +199,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                     Lámina #{idx + 1}
                   </span>
                   <div className="flex gap-1 text-2xl">
-                    {card.pictograms.join(' ')}
+                    {card.pictograms?.join(' ')}
                   </div>
                 </div>
 
@@ -194,7 +211,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                   <button
                     onClick={() => handleMoveCard(idx, idx - 1)}
                     disabled={idx === 0}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold"
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold text-slate-200"
                   >
                     ⬅️ Mover
                   </button>
@@ -210,7 +227,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                   <button
                     onClick={() => handleMoveCard(idx, idx + 1)}
                     disabled={idx === userSequence.length - 1}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold"
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold text-slate-200"
                   >
                     Mover ➡️
                   </button>
@@ -235,7 +252,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
             {/* Paper Story Card */}
             <div className="bg-slate-950 border-2 border-amber-600/40 rounded-2xl p-5 sm:p-6 text-center space-y-4 min-h-[220px] flex flex-col justify-between shadow-inner">
               <div className="flex justify-center items-center gap-3 text-5xl sm:text-6xl animate-bounce-slow">
-                {currentSlide.pictograms.map((p, i) => (
+                {currentSlide.pictograms?.map((p, i) => (
                   <span key={i}>{p}</span>
                 ))}
               </div>
@@ -260,7 +277,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
               </div>
 
               <div className="text-[11px] text-amber-400/80 font-bold uppercase tracking-wider">
-                {currentSlide.title} • ({matchedIndices.size} de {slideWords.length} palabras leídas)
+                {currentSlide.title} ({matchedIndices.size} de {slideWords.length} palabras leídas)
               </div>
             </div>
           </div>
@@ -317,7 +334,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
               onClick={handleNextSlide}
               className="px-4 py-2.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 text-slate-950 text-xs font-black rounded-xl shadow flex items-center gap-1"
             >
-              <span>{activeSlideIndex + 1 === userSequence.length ? 'Finalizar 🎉' : 'Siguiente'}</span>
+              <span>{activeSlideIndex + 1 === userSequence.length ? 'Finalizar 🌟' : 'Siguiente'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

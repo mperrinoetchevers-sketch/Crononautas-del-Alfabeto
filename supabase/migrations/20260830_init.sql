@@ -25,7 +25,7 @@ create policy "Allow all actions on player_profiles"
 -- 2. Tabla de Progreso del Juego
 create table if not exists public.game_progress (
   id uuid primary key default gen_random_uuid(),
-  profile_id text not null references public.player_profiles(id) on delete cascade,
+  profile_id text not null references public.player_profiles(id) on delete cascade unique,
   unlocked_eras text[] default array['prehistory'],
   stars_total int default 0,
   time_machine_parts text[] default array[]::text[],

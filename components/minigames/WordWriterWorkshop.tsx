@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Volume2, Sparkles, CheckCircle2, Delete, HelpCircle, ArrowRight, PenTool } from 'lucide-react';
+import { Volume2, Sparkles, CheckCircle2, Delete, HelpCircle } from 'lucide-react';
 import { WritingChallenge } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
@@ -36,18 +36,20 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
   const [isWordSuccess, setIsWordSuccess] = useState(false);
   const [totalMistakes, setTotalMistakes] = useState(0);
 
-  const currentWordObj = challenge.words[currentWordIdx] || challenge.words[0];
-  const targetLetters = currentWordObj.word.toUpperCase().split('');
+  const currentWordObj = challenge?.words?.[currentWordIdx] || challenge?.words?.[0];
+  const targetLetters = currentWordObj?.word ? currentWordObj.word.toUpperCase().split('') : [];
 
   // Setup word when index changes
   useEffect(() => {
     setTypedLetters([]);
     setIsWordSuccess(false);
-    tts.speak(`Taller de escritura: Escribe la palabra ${currentWordObj.word}.`);
+    if (currentWordObj?.word) {
+      tts.speak(`Taller de escritura: Escribe la palabra ${currentWordObj.word}.`);
+    }
   }, [currentWordIdx, currentWordObj]);
 
   const handleLetterPress = useCallback((letter: string) => {
-    if (isWordSuccess) return;
+    if (isWordSuccess || !currentWordObj?.word) return;
 
     const nextSlotIndex = typedLetters.length;
     if (nextSlotIndex >= targetLetters.length) return;
@@ -71,15 +73,15 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
       if (updated.length === targetLetters.length) {
         setIsWordSuccess(true);
         audioSynth.playWordComplete();
-        tts.speak(`¡Excelente! ¡${currentWordObj.word}! ${currentWordObj.hint}.`);
+        tts.speak(`¡Excelente! ¡${currentWordObj.word}! ${currentWordObj.hint || ''}.`);
 
         setTimeout(() => {
-          if (currentWordIdx + 1 < challenge.words.length) {
+          if (challenge?.words && currentWordIdx + 1 < challenge.words.length) {
             setCurrentWordIdx((prev) => prev + 1);
           } else {
             // All words completed!
             audioSynth.playCelebration();
-            tts.speak(`¡Felicidades! Has completado todas las palabras del taller de escritura.`);
+            tts.speak('¡Felicidades! Has completado todas las palabras del taller de escritura.');
             setTimeout(() => {
               const stars = totalMistakes === 0 ? 3 : totalMistakes <= 2 ? 2 : 1;
               onComplete(stars);
@@ -92,7 +94,7 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
       setTotalMistakes((m) => m + 1);
       tts.speak(`La siguiente letra es ${expectedLetter}`);
     }
-  }, [isWordSuccess, typedLetters, targetLetters, currentWordObj, currentWordIdx, challenge.words.length, totalMistakes, onComplete]);
+  }, [isWordSuccess, typedLetters, targetLetters, currentWordObj, currentWordIdx, challenge?.words?.length, totalMistakes, onComplete]);
 
   const handleBackspace = () => {
     if (typedLetters.length > 0 && !isWordSuccess) {
@@ -102,9 +104,10 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
   };
 
   const handleHearClue = () => {
+    if (!currentWordObj) return;
     audioSynth.playClick();
     tts.speak(
-      `Palabra: ${currentWordObj.word}. Sílabas: ${currentWordObj.syllables.join(' - ')}. Pista: ${currentWordObj.hint}`
+      `Palabra: ${currentWordObj.word}. Sílabas: ${currentWordObj.syllables?.join(' - ') || ''}. Pista: ${currentWordObj.hint || ''}`
     );
   };
 
@@ -123,7 +126,7 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
       if (e.key === 'Backspace') {
         e.preventDefault();
         handleBackspace();
-      } else if (/^[a-zA-ZáéíóúÁÉÍÓÚñÑ]$/.test(e.key)) {
+      } else if (/^[a-zA-ZñÑáéíóúÁÉÍÓÚ]$/.test(e.key)) {
         e.preventDefault();
         handleLetterPress(e.key.toUpperCase());
       }
@@ -132,6 +135,14 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleLetterPress]);
+
+  if (!challenge || !currentWordObj) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 bg-slate-900/90 border-2 border-cyan-500/40 rounded-3xl text-center text-cyan-300 font-bold">
+        Cargando taller de escritura...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto space-y-4 bg-slate-900/90 border-2 border-cyan-500/40 rounded-3xl p-4 sm:p-6 shadow-2xl backdrop-blur-md">
@@ -144,7 +155,7 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
               {challenge.title}
             </h3>
             <p className="text-xs text-slate-400">
-              Palabra {currentWordIdx + 1} de {challenge.words.length}
+              Palabra {currentWordIdx + 1} de {challenge.words?.length || 0}
             </p>
           </div>
         </div>
@@ -174,7 +185,7 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
 
         {/* Syllables Badge */}
         <div className="flex justify-center items-center gap-1.5 flex-wrap">
-          {currentWordObj.syllables.map((syl, i) => (
+          {currentWordObj.syllables?.map((syl, i) => (
             <span
               key={i}
               className="text-xs font-black bg-cyan-950/80 text-cyan-300 border border-cyan-500/30 px-2.5 py-0.5 rounded-full"

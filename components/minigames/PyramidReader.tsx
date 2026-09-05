@@ -23,8 +23,8 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
   const [micSupported, setMicSupported] = useState(true);
   const [micFeedback, setMicFeedback] = useState<string>('');
 
-  const currentStep = challenge.steps[activeStepIndex] || challenge.steps[0];
-  const stepWords = currentStep.text.split(' ');
+  const currentStep = challenge?.steps?.[activeStepIndex] || challenge?.steps?.[0];
+  const stepWords = currentStep?.text ? currentStep.text.split(' ') : [];
 
   useEffect(() => {
     setActiveStepIndex(0);
@@ -33,9 +33,11 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
     setMatchedIndices(new Set());
     setMicSupported(stt.isSupported());
 
-    tts.speak(
-      `Lectura en Pirámide: ${challenge.title}. Lee la oración completa en voz alta al micrófono para abrir el candado.`
-    );
+    if (challenge) {
+      tts.speak(
+        `Lectura en Pirámide: ${challenge.title}. Lee la oración completa en voz alta al micrófono para abrir el candado.`
+      );
+    }
 
     return () => {
       stt.stop();
@@ -48,7 +50,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
     setIsListening(false);
     audioSynth.playChime(stepIdx);
 
-    if (stepIdx + 1 < challenge.steps.length) {
+    if (challenge?.steps && stepIdx + 1 < challenge.steps.length) {
       setActiveStepIndex(stepIdx + 1);
       setSpokenTranscript('');
       setMatchedIndices(new Set());
@@ -59,7 +61,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
       audioSynth.playUnlock();
       audioSynth.playCelebration();
       tts.speak(
-        `¡Felicitaciones! Has leído toda la pirámide y revelado la palabra mágica: ${challenge.secretCodeWord}.`
+        `¡Felicitaciones! Has leído toda la pirámide y revelado la palabra mágica: ${challenge?.secretCodeWord || 'Victoria'}.`
       );
       setTimeout(() => {
         onComplete(3);
@@ -69,6 +71,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
 
   // Start listening to child's voice for current floor
   const handleStartMicReading = () => {
+    if (!currentStep?.text) return;
     audioSynth.playClick();
     setSpokenTranscript('');
     setMatchedIndices(new Set());
@@ -79,13 +82,15 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
       onEnd: () => setIsListening(false),
       onTranscript: (text) => {
         setSpokenTranscript(text);
-        // Real-time word highlight
-        const matched = getMatchedWordIndices(currentStep.text, text);
-        setMatchedIndices(matched);
+        if (currentStep?.text) {
+          const matched = getMatchedWordIndices(currentStep.text, text);
+          setMatchedIndices(matched);
+        }
       },
       onMatch: () => {
+        setIsListening(false);
         setMatchedIndices(new Set(stepWords.map((_, i) => i)));
-        setMicFeedback('¡Excelente lectura completa! ✨');
+        setMicFeedback('¡Excelente lectura completa! 🌟');
         tts.speak('¡Muy bien leído!');
         setTimeout(() => {
           handleFloorPassed(activeStepIndex);
@@ -109,7 +114,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
 
   // Manual / TTS fallback
   const handleListenCronobot = (stepIdx: number) => {
-    if (stepIdx !== activeStepIndex) return;
+    if (stepIdx !== activeStepIndex || !currentStep?.text) return;
     stt.stop();
     setIsListening(false);
     audioSynth.playClick();
@@ -126,12 +131,20 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
     handleFloorPassed(activeStepIndex);
   };
 
+  if (!challenge || !currentStep) {
+    return (
+      <div className="max-w-xl mx-auto p-6 bg-slate-900/90 border-2 border-purple-500/40 rounded-3xl text-center text-purple-300 font-bold">
+        Cargando desafío de pirámide...
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-xl mx-auto space-y-5 bg-slate-900/90 border-2 border-purple-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-md">
       {/* Header */}
       <div className="flex justify-between items-center flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <span className="text-3xl">📐</span>
+          <span className="text-3xl">🏛️</span>
           <div>
             <h3 className="text-base sm:text-lg font-black text-purple-300">Lectura en Pirámide</h3>
             <p className="text-xs text-slate-400">{challenge.title}</p>
@@ -148,7 +161,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
         <div className="bg-slate-950 border-2 border-purple-500/40 rounded-2xl p-4 text-center space-y-3 shadow-inner">
           <div className="flex items-center justify-between text-xs text-purple-300 font-bold">
             <span className="flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Piso {activeStepIndex + 1} de {challenge.steps.length}
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Piso {activeStepIndex + 1} de {challenge.steps?.length || 0}
             </span>
             <span className="text-amber-300">
               {matchedIndices.size} de {stepWords.length} palabras leídas
@@ -227,7 +240,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
 
       {/* Pyramid Steps Visual Stack */}
       <div className="space-y-2 flex flex-col items-center">
-        {challenge.steps.map((step, idx) => {
+        {challenge.steps?.map((step, idx) => {
           const isCurrent = activeStepIndex === idx;
           const isPassed = idx < activeStepIndex;
 

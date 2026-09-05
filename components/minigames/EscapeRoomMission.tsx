@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Volume2, Key, Sparkles, CheckCircle2, Lock } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 import { EscapeRiddle } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
@@ -26,11 +26,13 @@ export default function EscapeRoomMission({
   useEffect(() => {
     setSelectedOption(null);
     setIsUnlocked(false);
-    tts.speak(`Misión de Escape: ${riddle.title}. ${riddle.storyPrompt}`);
+    if (riddle) {
+      tts.speak(`Misión de Escape: ${riddle.title}. ${riddle.storyPrompt}`);
+    }
   }, [riddle]);
 
   const handleSelect = (option: string) => {
-    if (isUnlocked) return;
+    if (isUnlocked || !riddle) return;
     setSelectedOption(option);
 
     if (option.toLowerCase() === riddle.expectedAnswer.toLowerCase()) {
@@ -50,9 +52,18 @@ export default function EscapeRoomMission({
   };
 
   const handleHearClue = () => {
+    if (!riddle?.audioClue) return;
     audioSynth.playClick();
     tts.speak(riddle.audioClue);
   };
+
+  if (!riddle) {
+    return (
+      <div className="max-w-xl mx-auto p-6 bg-slate-900/90 border-2 border-yellow-500/50 rounded-3xl text-center text-amber-300 font-bold">
+        Cargando misión de escape...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-xl mx-auto space-y-6 bg-slate-900/90 border-2 border-yellow-500/50 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
@@ -98,8 +109,8 @@ export default function EscapeRoomMission({
                   isSelected && isUnlocked
                     ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 shadow-xl'
                     : isSelected && !isCorrect
-                    ? 'bg-red-950/80 border-red-500 text-red-300'
-                    : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-100 hover:border-amber-400'
+                    ? 'bg-rose-950/80 border-rose-500 text-rose-200 animate-shake'
+                    : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
                 }`}
               >
                 <span>{opt}</span>
@@ -109,28 +120,13 @@ export default function EscapeRoomMission({
         </div>
       )}
 
-      {/* Locked Artifact Preview */}
-      <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-slate-900 border border-amber-400/40 flex items-center justify-center text-2xl">
-            {artifactIcon}
-          </div>
-          <div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Artefacto en juego</span>
-            <h5 className="text-xs font-bold text-amber-300">{artifactName}</h5>
-          </div>
-        </div>
-        <div>
-          {isUnlocked ? (
-            <span className="text-xs bg-emerald-500 text-slate-950 font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> ¡Liberado!
-            </span>
-          ) : (
-            <span className="text-xs bg-slate-800 text-amber-400 font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
-              <Lock className="w-3.5 h-3.5" /> Bloqueado
-            </span>
-          )}
-        </div>
+      {/* Reward Artifact Preview */}
+      <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-3 flex items-center justify-between text-xs text-slate-400 font-bold">
+        <span>Recompensa al escapar:</span>
+        <span className="text-amber-300 flex items-center gap-1">
+          <span className="text-lg">{artifactIcon}</span>
+          {artifactName}
+        </span>
       </div>
     </div>
   );
