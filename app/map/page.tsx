@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Lock, Star, Sparkles, Trophy, Play, CheckCircle2, Cloud } from 'lucide-react';
+import { ArrowLeft, Lock, Star, Sparkles, Trophy, Play, CheckCircle2, BookOpen, Brain } from 'lucide-react';
 import TimePortalCanvas from '@/components/TimePortalCanvas';
 import AudioController from '@/components/AudioController';
 import ProfileSelector from '@/components/ProfileSelector';
+import ParentDashboardModal from '@/components/ParentDashboardModal';
 import { GAME_ERAS, EraDefinition } from '@/lib/game-data';
 import { storage, PlayerProfile, GameProgress, DEFAULT_AVATARS } from '@/lib/storage';
 import { audioSynth } from '@/lib/audio-synth';
@@ -16,6 +17,7 @@ export default function TimeMapPage() {
   const [progress, setProgress] = useState<GameProgress | null>(null);
   const [selectedEra, setSelectedEra] = useState<EraDefinition>(GAME_ERAS[0]);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isParentDashboardOpen, setIsParentDashboardOpen] = useState(false);
 
   useEffect(() => {
     const current = storage.getActiveProfile();
@@ -24,7 +26,7 @@ export default function TimeMapPage() {
       const prog = storage.getProgress(current.id);
       setProgress(prog);
     }
-    tts.speak(`Bienvenido al Mapa del Tiempo. Selecciona una época histórica para viajar y recuperar sus palabras.`);
+    tts.speak('Bienvenido al Mapa del Tiempo. Selecciona una época histórica o explora el Laboratorio de Vocabulario.');
   }, []);
 
   const handleSelectEra = (era: EraDefinition) => {
@@ -36,14 +38,14 @@ export default function TimeMapPage() {
       tts.speak(`${era.name}. ${era.description}`);
     } else {
       audioSynth.playError();
-      tts.speak(`Esta época aún está bloqueada por la tormenta temporal. Completa las eras anteriores para desbloquearla.`);
+      tts.speak('Esta época aún está bloqueada por la tormenta temporal. Completa las eras anteriores para desbloquearla.');
     }
   };
 
   const currentAvatar = DEFAULT_AVATARS.find((a) => a.id === profile?.avatar) || DEFAULT_AVATARS[0];
 
   return (
-    <main className="relative min-h-screen flex flex-col justify-between p-4 sm:p-6 overflow-hidden">
+    <main className="relative min-h-screen flex flex-col justify-between p-4 sm:p-6 overflow-hidden bg-slate-950 text-slate-100">
       {/* Dynamic Background Portal matched with selected era */}
       <div className="absolute inset-0 z-0 opacity-35">
         <TimePortalCanvas eraColor={selectedEra.themeColor} speedMultiplier={1.0} />
@@ -55,33 +57,56 @@ export default function TimeMapPage() {
           <Link
             href="/"
             onClick={() => audioSynth.playClick()}
-            className="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 border border-slate-700 shadow"
+            className="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 border border-slate-700 shadow transition-all active:scale-95"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <h1 className="text-base sm:text-xl font-black text-amber-300 flex items-center gap-2">
-              <span>🗺️</span> El Mapa del Tiempo
+              <span>⏳</span> El Mapa del Tiempo
             </h1>
             <p className="text-[11px] text-slate-400 font-medium hidden sm:block">
-              Viaja a través de 5 épocas históricas y repara la máquina
+              Viaja a través de las épocas históricas y repara la máquina
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* AI Vocabulary Lab Button */}
+          <Link
+            href="/vocabulary"
+            onClick={() => audioSynth.playClick()}
+            className="flex items-center gap-1.5 bg-cyan-950/80 hover:bg-cyan-900/80 border border-cyan-500/40 px-3 py-1.5 rounded-2xl text-xs font-bold text-cyan-300 shadow transition-all active:scale-95"
+          >
+            <span className="text-base">🧪</span>
+            <span className="hidden md:inline">Laboratorio Vocabulario</span>
+          </Link>
+
           {/* Machine Integrity Badge */}
           <Link
             href="/rewards"
             onClick={() => audioSynth.playClick()}
             className="flex items-center gap-2 bg-indigo-950/80 hover:bg-indigo-900/80 border border-indigo-500/40 px-3 py-1.5 rounded-2xl shadow"
           >
-            <span className="text-lg">⏳</span>
+            <span className="text-lg">⚙️</span>
             <div className="text-left hidden sm:block">
-              <span className="text-[10px] text-indigo-300 font-bold">Máquina del Tiempo</span>
-              <p className="text-xs font-black text-amber-300">{progress?.machineIntegrity || 20}% Integridad</p>
+              <span className="text-[10px] text-indigo-300 font-bold">Máquina</span>
+              <p className="text-xs font-black text-amber-300">{progress?.machineIntegrity || 20}%</p>
             </div>
           </Link>
+
+          {/* Parent & Educator AI Dashboard Trigger */}
+          <button
+            onClick={() => {
+              audioSynth.playClick();
+              setIsParentDashboardOpen(true);
+            }}
+            title="Panel de Progreso para Padres y Maestros"
+            className="flex items-center gap-1.5 bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 px-3 py-1.5 rounded-2xl text-xs font-bold text-purple-300 shadow transition-all active:scale-95"
+          >
+            <Brain className="w-4 h-4 text-purple-400" />
+            <span className="hidden lg:inline">Panel Padres</span>
+          </button>
 
           {/* Profile Switcher with Cloud Code */}
           <button
@@ -89,7 +114,7 @@ export default function TimeMapPage() {
               audioSynth.playClick();
               setIsProfileModalOpen(true);
             }}
-            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-2xl border border-slate-700 shadow transition-all"
+            className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-2xl border border-slate-700 shadow transition-all active:scale-95"
           >
             <span className="text-lg">{currentAvatar.emoji}</span>
             <div className="text-left">
@@ -108,11 +133,20 @@ export default function TimeMapPage() {
 
       {/* Main Map Content */}
       <div className="relative z-10 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6 my-auto py-4">
-        {/* 5 Eras Horizontal Road / Cards (Cols 8) */}
+        {/* 6 Eras Road / Cards (Cols 8) */}
         <div className="lg:col-span-8 space-y-3">
-          <h2 className="text-sm font-black text-slate-300 uppercase tracking-wider flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-400" /> Línea Temporal de la Historia:
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-slate-300 uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-400" /> Línea Temporal de la Historia:
+            </h2>
+            <Link
+              href="/vocabulary"
+              onClick={() => audioSynth.playClick()}
+              className="text-xs text-cyan-300 hover:text-cyan-200 font-bold flex items-center gap-1 underline underline-offset-4"
+            >
+              <span>🧪 Nuevas Palabras IA</span>
+            </Link>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {GAME_ERAS.map((era, index) => {
@@ -227,7 +261,7 @@ export default function TimeMapPage() {
         <span>Toca cualquier época para ver sus minijuegos y artefactos coleccionables</span>
       </footer>
 
-      {/* Profile Selector */}
+      {/* Profile Selector Modal */}
       <ProfileSelector
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
@@ -235,6 +269,12 @@ export default function TimeMapPage() {
           setProfile(p);
           setProgress(storage.getProgress(p.id));
         }}
+      />
+
+      {/* Parent & Educator AI Dashboard Modal */}
+      <ParentDashboardModal
+        isOpen={isParentDashboardOpen}
+        onClose={() => setIsParentDashboardOpen(false)}
       />
     </main>
   );

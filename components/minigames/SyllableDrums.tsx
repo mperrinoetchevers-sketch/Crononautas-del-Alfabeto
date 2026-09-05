@@ -5,6 +5,8 @@ import { Volume2, CheckCircle2 } from 'lucide-react';
 import { SyllableWord } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
+import { storage } from '@/lib/storage';
+import { aiLearningEngine } from '@/lib/ai-learning-engine';
 
 interface SyllableDrumsProps {
   words: SyllableWord[];
@@ -30,6 +32,7 @@ export default function SyllableDrums({ words, onComplete }: SyllableDrumsProps)
   const handleDrumTap = (sylIndex: number) => {
     if (!currentWord?.syllables) return;
     const expectedNextIndex = tappedSyllables.length;
+    const profile = storage.getActiveProfile();
 
     if (sylIndex === expectedNextIndex) {
       // Correct syllable in order
@@ -49,6 +52,10 @@ export default function SyllableDrums({ words, onComplete }: SyllableDrumsProps)
         audioSynth.playCelebration();
         tts.speak(`¡Excelente! ${currentWord.word} tiene ${currentWord.syllables.length} sílabas.`);
 
+        if (profile) {
+          aiLearningEngine.recordWordAttempt(profile.id, currentWord.word, true);
+        }
+
         setTimeout(() => {
           if (words && currentIndex + 1 < words.length) {
             setCurrentIndex(currentIndex + 1);
@@ -64,6 +71,10 @@ export default function SyllableDrums({ words, onComplete }: SyllableDrumsProps)
       setTotalMistakes((m) => m + 1);
       if (currentWord.syllables[expectedNextIndex]) {
         tts.speak(`Toca primero la sílaba ${currentWord.syllables[expectedNextIndex]}`);
+      }
+
+      if (profile) {
+        aiLearningEngine.recordWordAttempt(profile.id, currentWord.word, false);
       }
     }
   };

@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, Sparkles, User, Trophy, Volume2, Shield } from 'lucide-react';
+import { Play, Sparkles, User, Trophy, Volume2, Shield, Brain, BookOpen } from 'lucide-react';
 import TimePortalCanvas from '@/components/TimePortalCanvas';
 import ProfileSelector from '@/components/ProfileSelector';
 import AudioController from '@/components/AudioController';
+import ParentDashboardModal from '@/components/ParentDashboardModal';
 import { storage, PlayerProfile, DEFAULT_AVATARS } from '@/lib/storage';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
@@ -13,6 +14,7 @@ import { tts } from '@/lib/tts';
 export default function LobbyPage() {
   const [profile, setProfile] = useState<PlayerProfile | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isParentDashboardOpen, setIsParentDashboardOpen] = useState(false);
 
   useEffect(() => {
     let current = storage.getActiveProfile();
@@ -32,10 +34,10 @@ export default function LobbyPage() {
   const progress = profile ? storage.getProgress(profile.id) : null;
 
   return (
-    <main className="relative min-h-screen flex flex-col justify-between p-4 sm:p-8 overflow-hidden">
+    <main className="relative min-h-screen flex flex-col justify-between p-4 sm:p-8 overflow-hidden bg-slate-950 text-slate-100">
       {/* Background 2D Time Portal Canvas */}
       <div className="absolute inset-0 z-0 opacity-40">
-        <TimePortalCanvas eraColor="purple" speedMultiplier={1.2} />
+        <TimePortalCanvas eraColor="#6366f1" speedMultiplier={1.2} />
       </div>
 
       {/* Top Bar */}
@@ -49,12 +51,25 @@ export default function LobbyPage() {
               CRONONAUTAS DEL ALFABETO
             </h1>
             <p className="text-[11px] text-indigo-300 font-bold hidden sm:block">
-              Aventura 2D de Lectoescritura a través del Tiempo (8 años)
+              Aventura 2D de Lectoescritura a través del Tiempo con IA Adaptativa
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Parent Dashboard Button */}
+          <button
+            onClick={() => {
+              audioSynth.playClick();
+              setIsParentDashboardOpen(true);
+            }}
+            title="Panel de Control para Padres y Educadores"
+            className="flex items-center gap-1.5 bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 px-3 py-1.5 rounded-2xl text-xs font-bold text-purple-300 shadow transition-all active:scale-95"
+          >
+            <Brain className="w-4 h-4 text-purple-400" />
+            <span className="hidden md:inline">Panel Padres</span>
+          </button>
+
           {/* Profile Button */}
           <button
             onClick={() => {
@@ -95,14 +110,23 @@ export default function LobbyPage() {
         </div>
 
         {/* Start Game Big CTA */}
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 flex-wrap">
           <Link
             href="/map"
             onClick={handleStartGame}
-            className="w-full sm:w-auto px-8 py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-lg sm:text-xl rounded-3xl shadow-2xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 border-b-4 border-amber-800"
+            className="w-full sm:w-auto px-8 py-4 sm:py-5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-base sm:text-lg rounded-3xl shadow-2xl flex items-center justify-center gap-3 transition-transform hover:scale-105 active:scale-95 border-b-4 border-amber-800"
           >
-            <Play className="w-6 h-6 fill-slate-950" />
+            <Play className="w-5 h-5 fill-slate-950" />
             <span>¡INICIAR VIAJE TEMPORAL!</span>
+          </Link>
+
+          <Link
+            href="/vocabulary"
+            onClick={() => audioSynth.playClick()}
+            className="w-full sm:w-auto px-6 py-4 bg-cyan-950/80 hover:bg-cyan-900 border-2 border-cyan-500/50 text-cyan-200 font-bold text-sm rounded-3xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95"
+          >
+            <span className="text-lg">🧪</span>
+            <span>Laboratorio de Vocabulario IA</span>
           </Link>
 
           <Link
@@ -110,7 +134,7 @@ export default function LobbyPage() {
             onClick={() => audioSynth.playClick()}
             className="w-full sm:w-auto px-6 py-4 bg-slate-900/80 hover:bg-slate-800 border-2 border-indigo-500/50 text-indigo-200 font-bold text-sm rounded-3xl shadow-lg flex items-center justify-center gap-2 transition-all"
           >
-            <Trophy className="w-5 h-5 text-amber-400" />
+            <Trophy className="w-4 h-4 text-amber-400" />
             <span>Taller de la Máquina</span>
           </Link>
         </div>
@@ -123,7 +147,7 @@ export default function LobbyPage() {
           <div className="space-y-1">
             <h4 className="text-xs font-black text-amber-300">Cronobot Guía</h4>
             <p className="text-xs text-slate-200 font-medium">
-              &ldquo;¡Hola {profile?.name || 'explorador'}! ¿Listo para reparar la máquina del tiempo? ¡Toca Iniciar para viajar a la Prehistoria!&rdquo;
+              &ldquo;¡Hola {profile?.name || 'explorador'}! ¿Listo para reparar la máquina del tiempo? ¡Toca Iniciar para viajar a la Prehistoria o explora el Laboratorio para descubrir nuevas palabras!&rdquo;
             </p>
           </div>
         </div>
@@ -142,6 +166,12 @@ export default function LobbyPage() {
         isOpen={isProfileModalOpen}
         onClose={() => setIsProfileModalOpen(false)}
         onProfileChange={(p) => setProfile(p)}
+      />
+
+      {/* Parent Dashboard Modal */}
+      <ParentDashboardModal
+        isOpen={isParentDashboardOpen}
+        onClose={() => setIsParentDashboardOpen(false)}
       />
     </main>
   );

@@ -1,11 +1,13 @@
 ﻿'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Lock, Unlock, Sparkles, Check, Mic, MicOff, Radio } from 'lucide-react';
 import { PyramidChallenge } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
 import { stt, getMatchedWordIndices } from '@/lib/stt';
+import { storage } from '@/lib/storage';
+import { aiLearningEngine } from '@/lib/ai-learning-engine';
 
 interface PyramidReaderProps {
   challenge: PyramidChallenge;
@@ -22,6 +24,8 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
   const [matchedIndices, setMatchedIndices] = useState<Set<number>>(new Set());
   const [micSupported, setMicSupported] = useState(true);
   const [micFeedback, setMicFeedback] = useState<string>('');
+
+  const speechStartTimeRef = useRef<number>(Date.now());
 
   const currentStep = challenge?.steps?.[activeStepIndex] || challenge?.steps?.[0];
   const stepWords = currentStep?.text ? currentStep.text.split(' ') : [];
@@ -50,6 +54,14 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
     setIsListening(false);
     audioSynth.playChime(stepIdx);
 
+    const profile = storage.getActiveProfile();
+    const durationSeconds = Math.max(1, (Date.now() - speechStartTimeRef.current) / 1000);
+
+    if (profile && currentStep?.text) {
+      aiLearningEngine.recordReadingSpeed(profile.id, stepWords.length, durationSeconds, 1.0);
+      aiLearningEngine.recordWordAttempt(profile.id, currentStep.text, true);
+    }
+
     if (challenge?.steps && stepIdx + 1 < challenge.steps.length) {
       setActiveStepIndex(stepIdx + 1);
       setSpokenTranscript('');
@@ -72,6 +84,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
   // Start listening to child's voice for current floor
   const handleStartMicReading = () => {
     if (!currentStep?.text) return;
+    speechStartTimeRef.current = Date.now();
     audioSynth.playClick();
     setSpokenTranscript('');
     setMatchedIndices(new Set());

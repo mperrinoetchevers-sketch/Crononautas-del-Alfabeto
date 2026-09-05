@@ -5,6 +5,8 @@ import { Volume2, Sparkles, CheckCircle2, Delete, HelpCircle } from 'lucide-reac
 import { WritingChallenge } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
+import { storage } from '@/lib/storage';
+import { aiLearningEngine } from '@/lib/ai-learning-engine';
 
 interface WordWriterWorkshopProps {
   challenge: WritingChallenge;
@@ -61,6 +63,8 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
       letter.toUpperCase() === expectedLetter ||
       normalizeLetter(letter) === normalizeLetter(expectedLetter);
 
+    const profile = storage.getActiveProfile();
+
     if (isCorrect) {
       audioSynth.playKeyStroke();
       const updated = [...typedLetters, expectedLetter];
@@ -74,6 +78,10 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
         setIsWordSuccess(true);
         audioSynth.playWordComplete();
         tts.speak(`¡Excelente! ¡${currentWordObj.word}! ${currentWordObj.hint || ''}.`);
+
+        if (profile) {
+          aiLearningEngine.recordWordAttempt(profile.id, currentWordObj.word, true);
+        }
 
         setTimeout(() => {
           if (challenge?.words && currentWordIdx + 1 < challenge.words.length) {
@@ -93,6 +101,13 @@ export default function WordWriterWorkshop({ challenge, onComplete }: WordWriter
       audioSynth.playError();
       setTotalMistakes((m) => m + 1);
       tts.speak(`La siguiente letra es ${expectedLetter}`);
+
+      if (profile) {
+        aiLearningEngine.recordWordAttempt(profile.id, currentWordObj.word, false, {
+          expected: expectedLetter,
+          input: letter,
+        });
+      }
     }
   }, [isWordSuccess, typedLetters, targetLetters, currentWordObj, currentWordIdx, challenge?.words?.length, totalMistakes, onComplete]);
 
