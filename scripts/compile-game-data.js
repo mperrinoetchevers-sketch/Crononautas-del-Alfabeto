@@ -11,8 +11,9 @@ const egypt = readJsonClean("data-egypt.json");
 const medieval = readJsonClean("data-medieval.json");
 const industrial = readJsonClean("data-industrial.json");
 const future = readJsonClean("data-future.json");
+const ninja = readJsonClean("data-ninja.json");
 
-const eras = [prehistory, egypt, medieval, industrial, future];
+const eras = [prehistory, egypt, medieval, industrial, future, ninja];
 
 const fileContent = `// Curricular Pedagogical Game Data for Crononautas del Alfabeto
 
@@ -156,4 +157,4 @@ export function getAllEras(): EraDefinition[] {
 `;
 
 fs.writeFileSync(path.join(__dirname, "../lib/game-data.ts"), fileContent, "utf8");
-console.log("Successfully compiled lib/game-data.ts with chasers!");
+console.log("Successfully compiled lib/game-data.ts with all 6 eras including Ninja Turtles!");

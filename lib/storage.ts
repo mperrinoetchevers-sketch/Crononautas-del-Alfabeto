@@ -6,7 +6,7 @@ export interface PlayerProfile {
   id: string;
   syncCode: string; // Friendly recovery code (e.g. 'CRONO-8492' or 'REX-3810')
   name: string;
-  avatar: string; // 'rex' | 'scout' | 'robot' | 'knight' | 'astronaut' | 'wizard'
+  avatar: string; // 'rex' | 'ninja_turtle' | 'ninja_master' | 'scout' | 'robot' | 'knight' | 'astronaut' | 'wizard'
   age: number;
   createdAt: string;
 }
@@ -27,6 +27,8 @@ const PROGRESS_KEY_PREFIX = 'crononautas_progress_';
 
 export const DEFAULT_AVATARS = [
   { id: 'rex', emoji: '🦖', label: 'T-Rex' },
+  { id: 'ninja_turtle', emoji: '🐢', label: 'Tortuga Ninja' },
+  { id: 'ninja_master', emoji: '🥷', label: 'Sensei Ninja' },
   { id: 'scout', emoji: '🧭', label: 'Explorador' },
   { id: 'robot', emoji: '🤖', label: 'Cronobot' },
   { id: 'knight', emoji: '🛡️', label: 'Caballero' },
@@ -35,7 +37,7 @@ export const DEFAULT_AVATARS = [
 ];
 
 function generateFriendlyCode(avatar: string): string {
-  const prefix = avatar.toUpperCase();
+  const prefix = avatar.replace(/[^a-zA-Z]/g, '').slice(0, 5).toUpperCase() || 'CRONO';
   const randomNum = Math.floor(1000 + Math.random() * 9000);
   return `${prefix}-${randomNum}`;
 }
@@ -63,7 +65,6 @@ export class StorageManager {
     try {
       const raw = localStorage.getItem(PROFILES_KEY);
       const list: PlayerProfile[] = raw ? JSON.parse(raw) : [];
-      // Ensure each profile has a syncCode
       return list.map((p) => ({
         ...p,
         syncCode: p.syncCode || generateFriendlyCode(p.avatar || 'crono'),
@@ -84,7 +85,6 @@ export class StorageManager {
   public setActiveProfile(profileId: string) {
     if (typeof window === 'undefined') return;
     localStorage.setItem(ACTIVE_PROFILE_KEY, profileId);
-    // Background pull latest progress from cloud
     this.pullCloudProgress(profileId).catch(() => {});
   }
 
@@ -106,7 +106,6 @@ export class StorageManager {
       this.setActiveProfile(profile.id);
       this.initProgress(profile.id);
 
-      // Instant async sync to Supabase
       this.syncProfileToSupabase(profile).catch(() => {});
     }
 
@@ -146,11 +145,10 @@ export class StorageManager {
   public saveProgress(progress: GameProgress) {
     if (typeof window === 'undefined') return;
     progress.lastPlayedAt = new Date().toISOString();
-    // Calculate machine integrity: 20% base + 16% per collected artifact
-    progress.machineIntegrity = Math.min(100, 20 + progress.timeMachineParts.length * 16);
+    // 6 total eras: 20% base + 13.3% per artifact
+    progress.machineIntegrity = Math.min(100, Math.round(20 + (progress.timeMachineParts.length / 6) * 80));
     localStorage.setItem(PROGRESS_KEY_PREFIX + progress.profileId, JSON.stringify(progress));
 
-    // Instant async sync to Supabase
     this.syncProgressToSupabase(progress).catch(() => {});
   }
 
@@ -254,7 +252,6 @@ export class StorageManager {
 
       const localProg = this.getProgress(profileId);
 
-      // Merge progress prioritizing max stars and union of unlocked levels
       const mergedUnlocked = Array.from(
         new Set([...(localProg.unlockedEras || []), ...(data.unlocked_eras || [])])
       );
@@ -271,7 +268,7 @@ export class StorageManager {
         starsTotal: Math.max(localProg.starsTotal || 0, data.stars_total || 0),
         completedLevels: mergedLevels,
         timeMachineParts: mergedArtifacts,
-        machineIntegrity: Math.min(100, 20 + mergedArtifacts.length * 16),
+        machineIntegrity: Math.min(100, Math.round(20 + (mergedArtifacts.length / 6) * 80)),
         lastPlayedAt: new Date().toISOString(),
       };
 
@@ -292,12 +289,10 @@ export class StorageManager {
       const clean = queryCodeOrName.trim();
       if (!clean) return null;
 
-      // Construct possible IDs: direct code, prefixed with p_, or normalized
       const formattedCode = clean.toUpperCase();
       const possibleId1 = `p_${formattedCode.replace('-', '_')}`;
       const possibleId2 = clean;
 
-      // Query Supabase for profile
       let { data: profileRow, error } = await supabase
         .from('player_profiles')
         .select('*')
@@ -310,7 +305,6 @@ export class StorageManager {
         return null;
       }
 
-      // Reconstruct profile
       const syncCode =
         profileRow.id.startsWith('p_')
           ? profileRow.id.replace('p_', '').replace('_', '-')
@@ -325,7 +319,6 @@ export class StorageManager {
         createdAt: profileRow.created_at || new Date().toISOString(),
       };
 
-      // Fetch corresponding progress
       const { data: progressRow } = await supabase
         .from('game_progress')
         .select('*')
@@ -339,12 +332,11 @@ export class StorageManager {
         completedLevels: progressRow?.completed_levels || [],
         timeMachineParts: progressRow?.time_machine_parts || [],
         machineIntegrity: progressRow
-          ? Math.min(100, 20 + (progressRow.time_machine_parts?.length || 0) * 16)
+          ? Math.min(100, Math.round(20 + ((progressRow.time_machine_parts?.length || 0) / 6) * 80))
           : 20,
         lastPlayedAt: progressRow?.updated_at || new Date().toISOString(),
       };
 
-      // Save locally on this device
       const existingProfiles = this.getProfiles();
       const alreadySaved = existingProfiles.some((p) => p.id === profile.id);
       if (!alreadySaved) {

@@ -55,7 +55,8 @@ export default function EraPlayPage({ params }: PageProps) {
     egypt: 'medieval',
     medieval: 'industrial',
     industrial: 'future',
-    future: 'future',
+    future: 'ninja',
+    ninja: 'ninja',
   };
 
   const nextEraId = era ? nextEraMap[era.id] : 'prehistory';
@@ -119,7 +120,7 @@ export default function EraPlayPage({ params }: PageProps) {
 
       setCelebrationDetails({
         title: `¡Dominaste la ${era.name}!`,
-        message: `¡Descifraste todos los acertijos de lectura y rescataste el ${era.artifactName}!`,
+        message: `¡Descifraste todos los acertijos de lectura y rescataste la ${era.artifactName}!`,
         stars: starsEarned,
         artifact: {
           name: era.artifactName,
@@ -264,7 +265,7 @@ export default function EraPlayPage({ params }: PageProps) {
       {/* Companion Footer Drawer */}
       <div className="relative z-10 max-w-3xl mx-auto w-full pt-2">
         <CronobotCompanion
-          message={`¡Estás en ${era.name}! Supera las 7 misiones (incluyendo el Crono-Laberinto y el Taller de Escritura) para conseguir el ${era.artifactName}.`}
+          message={`¡Estás en ${era.name}! Supera las 7 misiones ninja para conseguir la ${era.artifactName}. ¡Cowabunga!`}
           expression="happy"
         />
       </div>

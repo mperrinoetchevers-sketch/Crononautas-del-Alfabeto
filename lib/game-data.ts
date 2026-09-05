@@ -2215,6 +2215,422 @@ export const GAME_ERAS: EraDefinition[] = [
         "TU"
       ]
     }
+  },
+  {
+    "id": "ninja",
+    "name": "Dimensión Ninja & Alcantarillas",
+    "periodLabel": "Nueva York - Dimensión Secreta",
+    "icon": "🐢",
+    "themeColor": "emerald",
+    "bgGradient": "from-emerald-950 via-green-950 to-slate-950",
+    "badge": "Maestro Ninja Lector",
+    "artifactName": "Pizza Dorada del Tiempo",
+    "artifactIcon": "🍕",
+    "description": "¡Viaja a la guarida secreta de las alcantarillas! Entrena con las cuatro Tortugas Ninja, esquiva a Destructor en el laberinto, escribe pergaminos secretos y rescata la Pizza Dorada.",
+    "pedagogicalFocus": "Grupos consonánticos complejos (TR, BL, SK, NJ), discriminación fonológica, lectura en voz alta con entonación de acción y ortografía de palabras clave.",
+    "syllablesWords": [
+      {
+        "id": "n1",
+        "word": "pizza",
+        "syllables": [
+          "piz",
+          "za"
+        ],
+        "pictogram": "🍕",
+        "category": "Ninja",
+        "hint": "Comida favorita de las cuatro tortugas"
+      },
+      {
+        "id": "n2",
+        "word": "ninja",
+        "syllables": [
+          "nin",
+          "ja"
+        ],
+        "pictogram": "🥷",
+        "category": "Ninja",
+        "hint": "Guerrero silencioso y muy ágil"
+      },
+      {
+        "id": "n3",
+        "word": "tortuga",
+        "syllables": [
+          "tor",
+          "tu",
+          "ga"
+        ],
+        "pictogram": "🐢",
+        "category": "Ninja",
+        "hint": "Héroe verde con caparazón resistente"
+      },
+      {
+        "id": "n4",
+        "word": "antifaz",
+        "syllables": [
+          "an",
+          "ti",
+          "faz"
+        ],
+        "pictogram": "🥽",
+        "category": "Ninja",
+        "hint": "Máscara de color para ocultar la identidad"
+      },
+      {
+        "id": "n5",
+        "word": "katana",
+        "syllables": [
+          "ka",
+          "ta",
+          "na"
+        ],
+        "pictogram": "⚔️",
+        "category": "Ninja",
+        "hint": "Espada tradicional de Leonardo"
+      },
+      {
+        "id": "n6",
+        "word": "salto",
+        "syllables": [
+          "sal",
+          "to"
+        ],
+        "pictogram": "🤸",
+        "category": "Ninja",
+        "hint": "Movimiento acrobático por los tejados"
+      },
+      {
+        "id": "n7",
+        "word": "maestro",
+        "syllables": [
+          "ma",
+          "es",
+          "tro"
+        ],
+        "pictogram": "🥋",
+        "category": "Ninja",
+        "hint": "Guía sabio que enseña disciplina y lectura"
+      },
+      {
+        "id": "n8",
+        "word": "clan",
+        "syllables": [
+          "clan"
+        ],
+        "pictogram": "🏯",
+        "category": "Ninja",
+        "hint": "Grupo de guerreros unidos por honor"
+      },
+      {
+        "id": "n9",
+        "word": "nunchaku",
+        "syllables": [
+          "nun",
+          "cha",
+          "ku"
+        ],
+        "pictogram": "🥢",
+        "category": "Ninja",
+        "hint": "Arma giratoria de Miguel Ángel"
+      },
+      {
+        "id": "n10",
+        "word": "alcantarilla",
+        "syllables": [
+          "al",
+          "can",
+          "ta",
+          "ri",
+          "lla"
+        ],
+        "pictogram": "🕳️",
+        "category": "Ninja",
+        "hint": "Túnel subterráneo donde viven las tortugas"
+      }
+    ],
+    "intruderChallenges": [
+      {
+        "id": "ic-n1",
+        "instruction": "Encuentra el objeto intruso que NO pertenece al mundo de las Tortugas Ninja:",
+        "type": "semantic",
+        "options": [
+          {
+            "text": "Pizza",
+            "pictogram": "🍕",
+            "isIntruder": false,
+            "reason": "Comida favorita de las tortugas"
+          },
+          {
+            "text": "Katana",
+            "pictogram": "⚔️",
+            "isIntruder": false,
+            "reason": "Arma ninja"
+          },
+          {
+            "text": "Microondas",
+            "pictogram": "📻",
+            "isIntruder": true,
+            "reason": "¡Un microondas no es un elemento ni técnica de combate ninja!"
+          },
+          {
+            "text": "Antifaz",
+            "pictogram": "🥽",
+            "isIntruder": false,
+            "reason": "Máscara de héroe"
+          }
+        ]
+      },
+      {
+        "id": "ic-n2",
+        "instruction": "Encuentra la palabra intrusa que NO contiene la letra J:",
+        "type": "orthographic",
+        "options": [
+          {
+            "text": "Nin-ja",
+            "pictogram": "🥷",
+            "isIntruder": false,
+            "reason": "Tiene letra J"
+          },
+          {
+            "text": "An-ti-faz",
+            "pictogram": "🥽",
+            "isIntruder": true,
+            "reason": "¡Antifaz termina con Z y no tiene la letra J!"
+          },
+          {
+            "text": "Te-ja-do",
+            "pictogram": "🏠",
+            "isIntruder": false,
+            "reason": "Tiene letra J"
+          },
+          {
+            "text": "O-jo",
+            "pictogram": "👁️",
+            "isIntruder": false,
+            "reason": "Tiene letra J"
+          }
+        ]
+      }
+    ],
+    "mazeChallenge": {
+      "id": "maze-n1",
+      "title": "El Laberinto de las Alcantarillas Ninja",
+      "theme": "ninja",
+      "targetWord": "NINJA",
+      "wordPictogram": "🥷",
+      "grid": [
+        "#######",
+        "#S....#",
+        "#.###.#",
+        "#.....#",
+        "#.###.#",
+        "#....E#",
+        "#######"
+      ],
+      "collectibles": [
+        {
+          "id": "col-n1",
+          "letter": "N",
+          "x": 2,
+          "y": 1,
+          "phonemeHint": "Sonido /n/"
+        },
+        {
+          "id": "col-n2",
+          "letter": "I",
+          "x": 5,
+          "y": 1,
+          "phonemeHint": "Vocal /i/"
+        },
+        {
+          "id": "col-n3",
+          "letter": "N",
+          "x": 3,
+          "y": 3,
+          "phonemeHint": "Sonido /n/"
+        },
+        {
+          "id": "col-n4",
+          "letter": "J",
+          "x": 1,
+          "y": 5,
+          "phonemeHint": "Sonido /j/"
+        },
+        {
+          "id": "col-n5",
+          "letter": "A",
+          "x": 4,
+          "y": 5,
+          "phonemeHint": "Vocal /a/"
+        }
+      ],
+      "chaser": {
+        "name": "Destructor (Shredder)",
+        "emoji": "🦹‍♂️",
+        "startX": 5,
+        "startY": 3,
+        "moveIntervalMs": 1300,
+        "warningMessage": "¡Cuidado con Destructor patrullando las tuberías con armadura de púas!"
+      },
+      "hint": "Navega por las tuberías secretas, esquiva a Destructor, junta las letras de N-I-N-J-A y llega al portal de la guarida."
+    },
+    "pyramidChallenges": [
+      {
+        "id": "pyr-n1",
+        "title": "El Entrenamiento Secreto del Dojo",
+        "theme": "Ninja",
+        "secretCodeWord": "COWABUNGA",
+        "rewardArtifactPiece": "Cinta Verde de Honor",
+        "steps": [
+          {
+            "text": "La tortuga"
+          },
+          {
+            "text": "La tortuga ninja"
+          },
+          {
+            "text": "La tortuga ninja entrena en el dojo"
+          },
+          {
+            "text": "La tortuga ninja entrena en el dojo para proteger la ciudad con honor."
+          }
+        ]
+      }
+    ],
+    "writingChallenge": {
+      "id": "write-n1",
+      "title": "Taller de Escritura del Pergamino Secreto",
+      "instruction": "Escribe las palabras ninja para sellar el código del Maestro Splinter:",
+      "words": [
+        {
+          "id": "wn1",
+          "word": "NINJA",
+          "syllables": [
+            "NIN",
+            "JA"
+          ],
+          "pictogram": "🥷",
+          "hint": "Guerrero sigiloso de caparazón verde",
+          "audioClue": "Nin-ja"
+        },
+        {
+          "id": "wn2",
+          "word": "PIZZA",
+          "syllables": [
+            "PIZ",
+            "ZA"
+          ],
+          "pictogram": "🍕",
+          "hint": "Masa caliente con queso y salsa",
+          "audioClue": "Piz-za"
+        },
+        {
+          "id": "wn3",
+          "word": "TORTUGA",
+          "syllables": [
+            "TOR",
+            "TU",
+            "GA"
+          ],
+          "pictogram": "🐢",
+          "hint": "Héroe con caparazón indestructible",
+          "audioClue": "Tor-tu-ga"
+        },
+        {
+          "id": "wn4",
+          "word": "MAESTRO",
+          "syllables": [
+            "MA",
+            "ES",
+            "TRO"
+          ],
+          "pictogram": "🥋",
+          "hint": "Sabio que enseña artes marciales",
+          "audioClue": "Ma-es-tro"
+        },
+        {
+          "id": "wn5",
+          "word": "KATANA",
+          "syllables": [
+            "KA",
+            "TA",
+            "NA"
+          ],
+          "pictogram": "⚔️",
+          "hint": "Espada afilada de combate",
+          "audioClue": "Ka-ta-na"
+        }
+      ]
+    },
+    "kamishibaiStory": {
+      "id": "kami-n1",
+      "title": "La Gran Misión de las Cuatro Tortugas",
+      "eraId": "ninja",
+      "moral": "El trabajo en equipo, la práctica constante y la lectura nos hacen héroes invencibles.",
+      "cards": [
+        {
+          "id": "kc-n1",
+          "sequenceIndex": 1,
+          "title": "El entrenamiento en la guarida",
+          "narrativeText": "En las alcantarillas secretas, las cuatro tortugas ninja practicaban lectura de mapas antiguos junto al maestro.",
+          "pictograms": [
+            "🐢",
+            "🥋",
+            "🗺️"
+          ],
+          "soundCue": "chime"
+        },
+        {
+          "id": "kc-n2",
+          "sequenceIndex": 2,
+          "title": "La alarma de la biblioteca",
+          "narrativeText": "Donatello vio en los monitores que Destructor intentaba robar los libros de historia de la ciudad.",
+          "pictograms": [
+            "💻",
+            "⚠️",
+            "🦹‍♂️"
+          ],
+          "soundCue": "drum"
+        },
+        {
+          "id": "kc-n3",
+          "sequenceIndex": 3,
+          "title": "El salto por los tejados",
+          "narrativeText": "Con acrobacias increíbles y descifrando las pistas a tiempo, las tortugas detuvieron al Clan del Pie.",
+          "pictograms": [
+            "🤸",
+            "🏙️",
+            "📖"
+          ],
+          "soundCue": "portal"
+        },
+        {
+          "id": "kc-n4",
+          "sequenceIndex": 4,
+          "title": "El festín de la victoria",
+          "narrativeText": "Recuperaron la Pizza Dorada del Tiempo y festejaron gritando ¡Cowabunga! en la gran fiesta de queso.",
+          "pictograms": [
+            "🎉",
+            "🍕",
+            "🏆"
+          ],
+          "soundCue": "celebration"
+        }
+      ]
+    },
+    "escapeRiddle": {
+      "id": "esc-n1",
+      "title": "El Cofre del Maestro Splinter",
+      "storyPrompt": "Para abrir el cofre sagrado de las armas ninja, completa el legendario grito de victoria: \"CO - WA - BUN - _______\"",
+      "targetQuestion": "¿Qué sílaba completa la palabra \"COWABUNGA\"?",
+      "expectedAnswer": "GA",
+      "audioClue": "Escucha bien: CO (1) - WA (2) - BUN (3) - GA (4). ¡Falta la sílaba GA!",
+      "options": [
+        "GA",
+        "GO",
+        "GU",
+        "PA"
+      ]
+    }
   }
 ];
 
