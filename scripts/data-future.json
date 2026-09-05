@@ -8,8 +8,8 @@
   "badge": "Gran Maestro Crononauta",
   "artifactName": "Batería Crono-Cuántica",
   "artifactIcon": "🔋",
-  "description": "¡La estación espacial del futuro! Domina el laberinto cuántico, escribe códigos estelares, comprende historias galácticas y enciende la Máquina del Tiempo.",
-  "pedagogicalFocus": "Comprensión lectora profunda, secuenciación narrativa, ortografía de precisión y autonomía lectora total.",
+  "description": "¡La estación espacial del futuro! Domina el laberinto cuántico esquivando al glitch temporal, escribe códigos estelares, comprende historias galácticas y enciende la Máquina del Tiempo.",
+  "pedagogicalFocus": "Comprensión lectora profunda, narración en voz alta, ortografía de precisión y autonomía lectora total.",
   "syllablesWords": [
     { "id": "f1", "word": "cohete", "syllables": ["co", "he", "te"], "pictogram": "🚀", "category": "Espacio", "hint": "Nave propulsada que viaja a las estrellas" },
     { "id": "f2", "word": "planeta", "syllables": ["pla", "ne", "ta"], "pictogram": "🪐", "category": "Espacio", "hint": "Cuerpo celeste esférico que gira en órbita" },
@@ -68,7 +68,15 @@
       { "id": "col-f4", "letter": "O", "x": 1, "y": 5, "phonemeHint": "Vocal /o/" },
       { "id": "col-f5", "letter": "T", "x": 4, "y": 5, "phonemeHint": "Sonido /t/" }
     ],
-    "hint": "Conecta los circuitos cibernéticos, recolecta las letras de R-O-B-O-T y activa el portal."
+    "chaser": {
+      "name": "Glitch Cuántico",
+      "emoji": "👾",
+      "startX": 4,
+      "startY": 1,
+      "moveIntervalMs": 1300,
+      "warningMessage": "¡Cuidado con el Glitch Cuántico que altera la red espacial!"
+    },
+    "hint": "Conecta los circuitos, esquiva al glitch cuántico, recolecta las letras de R-O-B-O-T y activa el portal."
   },
   "pyramidChallenges": [
     {

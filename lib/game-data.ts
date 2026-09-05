@@ -29,6 +29,15 @@ export interface MazeCollectible {
   phonemeHint?: string;
 }
 
+export interface MazeChaser {
+  name: string;
+  emoji: string;
+  startX: number;
+  startY: number;
+  moveIntervalMs: number;
+  warningMessage: string;
+}
+
 export interface MazeChallenge {
   id: string;
   title: string;
@@ -37,6 +46,7 @@ export interface MazeChallenge {
   wordPictogram: string;
   grid: string[];
   collectibles: MazeCollectible[];
+  chaser?: MazeChaser;
   hint: string;
 }
 
@@ -129,8 +139,8 @@ export const GAME_ERAS: EraDefinition[] = [
     "badge": "Cazador de Sílabas",
     "artifactName": "Cristal Fósil de Ámbar",
     "artifactIcon": "💎",
-    "description": "¡Viaja a la era de los dinosaurios! Explora cavernas, supera laberintos de lava, escribe palabras rupestres y rescata el cristal fósil.",
-    "pedagogicalFocus": "Conciencia fonológica, segmentación silábica (2 a 4 sílabas), navegación espacial y escritura de palabras clave.",
+    "description": "¡Viaja a la era de los dinosaurios! Explora cavernas, supera laberintos de lava esquivando al raptor, escribe palabras rupestres y rescata el cristal fósil.",
+    "pedagogicalFocus": "Conciencia fonológica, segmentación silábica (2 a 4 sílabas), navegación espacial, lectura en voz alta y escritura.",
     "syllablesWords": [
       {
         "id": "p1",
@@ -361,7 +371,15 @@ export const GAME_ERAS: EraDefinition[] = [
           "phonemeHint": "Sonido /l/"
         }
       ],
-      "hint": "Guía a Cronobot por la cueva, recoge las 5 letras de F-O-S-I-L y llega al portal de salida."
+      "chaser": {
+        "name": "Pequeño Raptor",
+        "emoji": "🦖",
+        "startX": 5,
+        "startY": 3,
+        "moveIntervalMs": 1400,
+        "warningMessage": "¡Cuidado con el pequeño Raptor que vigila los fósiles!"
+      },
+      "hint": "Guía a Cronobot por la cueva, esquiva al raptor, recoge las 5 letras de F-O-S-I-L y llega al portal."
     },
     "pyramidChallenges": [
       {
@@ -529,8 +547,8 @@ export const GAME_ERAS: EraDefinition[] = [
     "badge": "Descifrador de Jeroglíficos",
     "artifactName": "Papiro del Tiempo Dorado",
     "artifactIcon": "📜",
-    "description": "¡Desembarca junto al río Nilo! Descifra los símbolos de las pirámides, recorre laberintos de arena, escribe palabras sagradas y halla el papiro dorado.",
-    "pedagogicalFocus": "Lectura de palabras bisílabas y polisílabas, ortografía de palabras con acentos y comprensión de pistas contextuales.",
+    "description": "¡Desembarca junto al río Nilo! Descifra los símbolos de las pirámides, recorre laberintos de arena esquivando a la momia guardiana y halla el papiro dorado.",
+    "pedagogicalFocus": "Lectura de palabras bisílabas y polisílabas, ortografía de palabras con acentos, lectura en voz alta y comprensión.",
     "syllablesWords": [
       {
         "id": "e1",
@@ -770,7 +788,15 @@ export const GAME_ERAS: EraDefinition[] = [
           "phonemeHint": "Vocal /a/"
         }
       ],
-      "hint": "Recorre los pasillos dorados de la pirámide, junta las letras de M-O-M-I-A y cruza el portal."
+      "chaser": {
+        "name": "Momia Guardiana",
+        "emoji": "🧟",
+        "startX": 5,
+        "startY": 1,
+        "moveIntervalMs": 1500,
+        "warningMessage": "¡Cuidado con la Momia que despierta en la tumba sagrada!"
+      },
+      "hint": "Recorre los pasillos dorados, esquiva a la momia, junta las letras de M-O-M-I-A y cruza el portal."
     },
     "pyramidChallenges": [
       {
@@ -942,8 +968,8 @@ export const GAME_ERAS: EraDefinition[] = [
     "badge": "Caballero Lector",
     "artifactName": "Engranaje de Hierro Real",
     "artifactIcon": "⚙️",
-    "description": "¡Adéntrate en la fortaleza medieval! Esquiva dragones, atraviesa el laberinto de la mazmorra, redacta tratados de caballeros y rescata el engranaje real.",
-    "pedagogicalFocus": "Lectura expresiva, fluidez lectora, ortografía de palabras complejas y comprensión inferencial.",
+    "description": "¡Adéntrate en la fortaleza medieval! Esquiva la cría de dragón, atraviesa el laberinto de la mazmorra, redacta tratados de caballeros y rescata el engranaje real.",
+    "pedagogicalFocus": "Lectura expresiva en voz alta, fluidez lectora, ortografía de palabras complejas y comprensión inferencial.",
     "syllablesWords": [
       {
         "id": "m1",
@@ -1188,7 +1214,15 @@ export const GAME_ERAS: EraDefinition[] = [
           "phonemeHint": "Vocal /a/"
         }
       ],
-      "hint": "Navega por las piedras del castillo, recolecta las letras de E-S-P-A-D-A y llega a la salida."
+      "chaser": {
+        "name": "Cría de Dragón",
+        "emoji": "🐲",
+        "startX": 3,
+        "startY": 5,
+        "moveIntervalMs": 1350,
+        "warningMessage": "¡Cuidado con la Cría de Dragón que vuela por los pasillos!"
+      },
+      "hint": "Navega por las piedras del castillo, esquiva al dragón, recolecta las letras de E-S-P-A-D-A y llega a la salida."
     },
     "pyramidChallenges": [
       {
@@ -1360,8 +1394,8 @@ export const GAME_ERAS: EraDefinition[] = [
     "badge": "Maestro Mecánico",
     "artifactName": "Manómetro de Presión Cuántica",
     "artifactIcon": "🎛️",
-    "description": "¡Súbete al ferrocarril de vapor! Conoce las primeras fábricas, recorre el laberinto de tuberías, escribe patentes mecánicas y rescata el manómetro.",
-    "pedagogicalFocus": "Comprensión de oraciones compuestas, vocabulario técnico temprano, discriminación visual y secuenciación lógica.",
+    "description": "¡Súbete al ferrocarril de vapor! Conoce las primeras fábricas, recorre el laberinto de tuberías esquivando al dron inspector y rescata el manómetro.",
+    "pedagogicalFocus": "Comprensión de oraciones compuestas, vocabulario técnico temprano, lectura expresiva en voz alta y secuenciación lógica.",
     "syllablesWords": [
       {
         "id": "i1",
@@ -1596,7 +1630,15 @@ export const GAME_ERAS: EraDefinition[] = [
           "phonemeHint": "Sonido /r/"
         }
       ],
-      "hint": "Cruza la fábrica de tuberías, junta las letras de V-A-P-O-R y llega a la estación."
+      "chaser": {
+        "name": "Inspector a Vapor",
+        "emoji": "🤖",
+        "startX": 1,
+        "startY": 5,
+        "moveIntervalMs": 1400,
+        "warningMessage": "¡Cuidado con el Robot Inspector de tuberías a vapor!"
+      },
+      "hint": "Cruza la fábrica de tuberías, esquiva al robot inspector, junta las letras de V-A-P-O-R y llega a la estación."
     },
     "pyramidChallenges": [
       {
@@ -1765,8 +1807,8 @@ export const GAME_ERAS: EraDefinition[] = [
     "badge": "Gran Maestro Crononauta",
     "artifactName": "Batería Crono-Cuántica",
     "artifactIcon": "🔋",
-    "description": "¡La estación espacial del futuro! Domina el laberinto cuántico, escribe códigos estelares, comprende historias galácticas y enciende la Máquina del Tiempo.",
-    "pedagogicalFocus": "Comprensión lectora profunda, secuenciación narrativa, ortografía de precisión y autonomía lectora total.",
+    "description": "¡La estación espacial del futuro! Domina el laberinto cuántico esquivando al glitch temporal, escribe códigos estelares, comprende historias galácticas y enciende la Máquina del Tiempo.",
+    "pedagogicalFocus": "Comprensión lectora profunda, narración en voz alta, ortografía de precisión y autonomía lectora total.",
     "syllablesWords": [
       {
         "id": "f1",
@@ -2005,7 +2047,15 @@ export const GAME_ERAS: EraDefinition[] = [
           "phonemeHint": "Sonido /t/"
         }
       ],
-      "hint": "Conecta los circuitos cibernéticos, recolecta las letras de R-O-B-O-T y activa el portal."
+      "chaser": {
+        "name": "Glitch Cuántico",
+        "emoji": "👾",
+        "startX": 4,
+        "startY": 1,
+        "moveIntervalMs": 1300,
+        "warningMessage": "¡Cuidado con el Glitch Cuántico que altera la red espacial!"
+      },
+      "hint": "Conecta los circuitos, esquiva al glitch cuántico, recolecta las letras de R-O-B-O-T y activa el portal."
     },
     "pyramidChallenges": [
       {

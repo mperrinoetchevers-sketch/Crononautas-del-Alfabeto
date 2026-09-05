@@ -8,8 +8,8 @@
   "badge": "Cazador de Sílabas",
   "artifactName": "Cristal Fósil de Ámbar",
   "artifactIcon": "💎",
-  "description": "¡Viaja a la era de los dinosaurios! Explora cavernas, supera laberintos de lava, escribe palabras rupestres y rescata el cristal fósil.",
-  "pedagogicalFocus": "Conciencia fonológica, segmentación silábica (2 a 4 sílabas), navegación espacial y escritura de palabras clave.",
+  "description": "¡Viaja a la era de los dinosaurios! Explora cavernas, supera laberintos de lava esquivando al raptor, escribe palabras rupestres y rescata el cristal fósil.",
+  "pedagogicalFocus": "Conciencia fonológica, segmentación silábica (2 a 4 sílabas), navegación espacial, lectura en voz alta y escritura.",
   "syllablesWords": [
     { "id": "p1", "word": "fósil", "syllables": ["fó", "sil"], "pictogram": "🦴", "category": "Prehistoria", "hint": "Resto antiguo convertido en roca" },
     { "id": "p2", "word": "volcán", "syllables": ["vol", "cán"], "pictogram": "🌋", "category": "Prehistoria", "hint": "Montaña que expulsa lava y fuego" },
@@ -68,7 +68,15 @@
       { "id": "col-p4", "letter": "I", "x": 1, "y": 5, "phonemeHint": "Vocal /i/" },
       { "id": "col-p5", "letter": "L", "x": 4, "y": 5, "phonemeHint": "Sonido /l/" }
     ],
-    "hint": "Guía a Cronobot por la cueva, recoge las 5 letras de F-O-S-I-L y llega al portal de salida."
+    "chaser": {
+      "name": "Pequeño Raptor",
+      "emoji": "🦖",
+      "startX": 5,
+      "startY": 3,
+      "moveIntervalMs": 1400,
+      "warningMessage": "¡Cuidado con el pequeño Raptor que vigila los fósiles!"
+    },
+    "hint": "Guía a Cronobot por la cueva, esquiva al raptor, recoge las 5 letras de F-O-S-I-L y llega al portal."
   },
   "pyramidChallenges": [
     {

@@ -8,8 +8,8 @@
   "badge": "Maestro Mecánico",
   "artifactName": "Manómetro de Presión Cuántica",
   "artifactIcon": "🎛️",
-  "description": "¡Súbete al ferrocarril de vapor! Conoce las primeras fábricas, recorre el laberinto de tuberías, escribe patentes mecánicas y rescata el manómetro.",
-  "pedagogicalFocus": "Comprensión de oraciones compuestas, vocabulario técnico temprano, discriminación visual y secuenciación lógica.",
+  "description": "¡Súbete al ferrocarril de vapor! Conoce las primeras fábricas, recorre el laberinto de tuberías esquivando al dron inspector y rescata el manómetro.",
+  "pedagogicalFocus": "Comprensión de oraciones compuestas, vocabulario técnico temprano, lectura expresiva en voz alta y secuenciación lógica.",
   "syllablesWords": [
     { "id": "i1", "word": "tren", "syllables": ["tren"], "pictogram": "🚂", "category": "Industrial", "hint": "Vehículo potente que corre sobre vías de acero" },
     { "id": "i2", "word": "vapor", "syllables": ["va", "por"], "pictogram": "💨", "category": "Industrial", "hint": "Gas blanco que impulsa los pistones con calor" },
@@ -68,7 +68,15 @@
       { "id": "col-i4", "letter": "O", "x": 1, "y": 5, "phonemeHint": "Vocal /o/" },
       { "id": "col-i5", "letter": "R", "x": 4, "y": 5, "phonemeHint": "Sonido /r/" }
     ],
-    "hint": "Cruza la fábrica de tuberías, junta las letras de V-A-P-O-R y llega a la estación."
+    "chaser": {
+      "name": "Inspector a Vapor",
+      "emoji": "🤖",
+      "startX": 1,
+      "startY": 5,
+      "moveIntervalMs": 1400,
+      "warningMessage": "¡Cuidado con el Robot Inspector de tuberías a vapor!"
+    },
+    "hint": "Cruza la fábrica de tuberías, esquiva al robot inspector, junta las letras de V-A-P-O-R y llega a la estación."
   },
   "pyramidChallenges": [
     {

@@ -45,6 +45,15 @@ export interface MazeCollectible {
   phonemeHint?: string;
 }
 
+export interface MazeChaser {
+  name: string;
+  emoji: string;
+  startX: number;
+  startY: number;
+  moveIntervalMs: number;
+  warningMessage: string;
+}
+
 export interface MazeChallenge {
   id: string;
   title: string;
@@ -53,6 +62,7 @@ export interface MazeChallenge {
   wordPictogram: string;
   grid: string[];
   collectibles: MazeCollectible[];
+  chaser?: MazeChaser;
   hint: string;
 }
 
@@ -146,4 +156,4 @@ export function getAllEras(): EraDefinition[] {
 `;
 
 fs.writeFileSync(path.join(__dirname, "../lib/game-data.ts"), fileContent, "utf8");
-console.log("Successfully compiled lib/game-data.ts with BOM stripping!");
+console.log("Successfully compiled lib/game-data.ts with chasers!");

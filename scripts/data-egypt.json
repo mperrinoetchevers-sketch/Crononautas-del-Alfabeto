@@ -8,8 +8,8 @@
   "badge": "Descifrador de Jeroglíficos",
   "artifactName": "Papiro del Tiempo Dorado",
   "artifactIcon": "📜",
-  "description": "¡Desembarca junto al río Nilo! Descifra los símbolos de las pirámides, recorre laberintos de arena, escribe palabras sagradas y halla el papiro dorado.",
-  "pedagogicalFocus": "Lectura de palabras bisílabas y polisílabas, ortografía de palabras con acentos y comprensión de pistas contextuales.",
+  "description": "¡Desembarca junto al río Nilo! Descifra los símbolos de las pirámides, recorre laberintos de arena esquivando a la momia guardiana y halla el papiro dorado.",
+  "pedagogicalFocus": "Lectura de palabras bisílabas y polisílabas, ortografía de palabras con acentos, lectura en voz alta y comprensión.",
   "syllablesWords": [
     { "id": "e1", "word": "arena", "syllables": ["a", "re", "na"], "pictogram": "🏜️", "category": "Egipto", "hint": "Cubre todo el gran desierto" },
     { "id": "e2", "word": "momia", "syllables": ["mo", "mia"], "pictogram": "📜", "category": "Egipto", "hint": "Envuelto en telas antiguas en la tumba" },
@@ -68,7 +68,15 @@
       { "id": "col-e4", "letter": "I", "x": 1, "y": 5, "phonemeHint": "Vocal /i/" },
       { "id": "col-e5", "letter": "A", "x": 4, "y": 5, "phonemeHint": "Vocal /a/" }
     ],
-    "hint": "Recorre los pasillos dorados de la pirámide, junta las letras de M-O-M-I-A y cruza el portal."
+    "chaser": {
+      "name": "Momia Guardiana",
+      "emoji": "🧟",
+      "startX": 5,
+      "startY": 1,
+      "moveIntervalMs": 1500,
+      "warningMessage": "¡Cuidado con la Momia que despierta en la tumba sagrada!"
+    },
+    "hint": "Recorre los pasillos dorados, esquiva a la momia, junta las letras de M-O-M-I-A y cruza el portal."
   },
   "pyramidChallenges": [
     {

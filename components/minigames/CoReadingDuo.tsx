@@ -1,9 +1,10 @@
 ﻿'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Volume2, UserCheck, Bot, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Volume2, UserCheck, Bot, Sparkles, CheckCircle2, Mic, MicOff, Radio } from 'lucide-react';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
+import { stt } from '@/lib/stt';
 
 interface CoReadingDuoProps {
   dialogues: {
@@ -17,13 +18,28 @@ interface CoReadingDuoProps {
 export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isBotSpeaking, setIsBotSpeaking] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [spokenTranscript, setSpokenTranscript] = useState('');
+  const [micFeedback, setMicFeedback] = useState('');
 
   const currentLine = dialogues[currentIndex] || dialogues[0];
 
   useEffect(() => {
+    stt.stop();
+    setIsListening(false);
+    setSpokenTranscript('');
+    setMicFeedback('');
+
     if (currentLine.speaker === 'cronobot') {
       triggerBotSpeech();
+    } else {
+      // Prompt child to read
+      tts.speak(`¡Tu turno de leer en voz alta!`);
     }
+
+    return () => {
+      stt.stop();
+    };
   }, [currentIndex]);
 
   const triggerBotSpeech = () => {
@@ -36,7 +52,9 @@ export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProp
     });
   };
 
-  const handleChildRead = () => {
+  const handleAdvance = () => {
+    stt.stop();
+    setIsListening(false);
     audioSynth.playCelebration();
     tts.speak(`¡Excelente lectura!`);
 
@@ -47,6 +65,33 @@ export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProp
         onComplete(3);
       }
     }, 1500);
+  };
+
+  const handleStartMic = () => {
+    audioSynth.playClick();
+    setSpokenTranscript('');
+    setMicFeedback('🎙️ Escuchando... ¡Lee la frase en voz alta!');
+
+    stt.start(currentLine.text, {
+      onStart: () => setIsListening(true),
+      onEnd: () => setIsListening(false),
+      onTranscript: (text) => {
+        setSpokenTranscript(text);
+      },
+      onMatch: () => {
+        setMicFeedback('¡Te escuché genial! ✨');
+        handleAdvance();
+      },
+      onError: (err) => {
+        setIsListening(false);
+        setMicFeedback(err);
+      },
+    });
+  };
+
+  const handleStopMic = () => {
+    stt.stop();
+    setIsListening(false);
   };
 
   const handleAdvanceBot = () => {
@@ -87,7 +132,7 @@ export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProp
             </span>
           ) : (
             <span className="text-xs font-black bg-amber-400 text-slate-950 px-3 py-1 rounded-full flex items-center gap-1">
-              <UserCheck className="w-3.5 h-3.5" /> ¡Tu Turno de Leer, Explorador!
+              <UserCheck className="w-3.5 h-3.5" /> ¡Tu Turno de Leer en Voz Alta!
             </span>
           )}
         </div>
@@ -97,6 +142,18 @@ export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProp
         <p className="text-lg sm:text-xl font-black text-slate-100 leading-relaxed">
           &ldquo;{currentLine.text}&rdquo;
         </p>
+
+        {/* Live speech feedback for child */}
+        {spokenTranscript && currentLine.speaker === 'child' && (
+          <div className="text-xs font-medium text-slate-300 bg-slate-900/90 p-2.5 rounded-xl border border-amber-500/40 flex items-center justify-center gap-1.5 animate-fade-in">
+            <Radio className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            <span>Te escuché: <strong className="text-amber-300">&ldquo;{spokenTranscript}&rdquo;</strong></span>
+          </div>
+        )}
+
+        {micFeedback && currentLine.speaker === 'child' && (
+          <p className="text-[11px] text-amber-300 font-bold">{micFeedback}</p>
+        )}
 
         {currentLine.speaker === 'cronobot' ? (
           <div className="flex justify-center gap-2 pt-2">
@@ -114,13 +171,29 @@ export default function CoReadingDuo({ dialogues, onComplete }: CoReadingDuoProp
             </button>
           </div>
         ) : (
-          <div className="pt-2">
+          <div className="flex flex-col gap-2 pt-2">
+            {isListening ? (
+              <button
+                onClick={handleStopMic}
+                className="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white font-black text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2"
+              >
+                <MicOff className="w-5 h-5" /> Detener Micrófono
+              </button>
+            ) : (
+              <button
+                onClick={handleStartMic}
+                className="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 text-slate-950 font-black text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
+              >
+                <Mic className="w-5 h-5" /> 🎙️ ¡Leer con mi Micrófono!
+              </button>
+            )}
+
             <button
-              onClick={handleChildRead}
-              className="w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-black text-sm rounded-2xl shadow-xl flex items-center justify-center gap-2 active:scale-95 transition-transform"
+              onClick={handleAdvance}
+              className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl border border-slate-700 flex items-center justify-center gap-1.5"
             >
-              <CheckCircle2 className="w-5 h-5" />
-              <span>¡Ya lo leí en voz alta!</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Ya lo leí en voz alta (Avanzar)</span>
             </button>
           </div>
         )}

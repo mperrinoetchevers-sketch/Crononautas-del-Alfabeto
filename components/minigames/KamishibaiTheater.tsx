@@ -1,10 +1,11 @@
 ﻿'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Volume2, ArrowLeft, ArrowRight, Play, CheckCircle2, Sparkles, RefreshCw } from 'lucide-react';
+import { Volume2, Sparkles, ArrowLeft, ArrowRight, Mic, MicOff, Radio, CheckCircle2 } from 'lucide-react';
 import { KamishibaiStory, KamishibaiCard } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
+import { stt } from '@/lib/stt';
 
 interface KamishibaiTheaterProps {
   story: KamishibaiStory;
@@ -12,18 +13,30 @@ interface KamishibaiTheaterProps {
 }
 
 export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheaterProps) {
-  // Shuffled cards for sequencing challenge
   const [userSequence, setUserSequence] = useState<KamishibaiCard[]>([]);
   const [isOrdered, setIsOrdered] = useState(false);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
+  // Speech Recognition state for Theater Narration
+  const [isListening, setIsListening] = useState(false);
+  const [spokenTranscript, setSpokenTranscript] = useState('');
+  const [micFeedback, setMicFeedback] = useState('');
+
+  // Shuffle the cards on load
   useEffect(() => {
-    // Shuffle the cards initially
     const shuffled = [...story.cards].sort(() => Math.random() - 0.5);
     setUserSequence(shuffled);
     setIsOrdered(false);
     setActiveSlideIndex(0);
-    tts.speak(`Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.`);
+    setSpokenTranscript('');
+    setMicFeedback('');
+    tts.speak(
+      `Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.`
+    );
+
+    return () => {
+      stt.stop();
+    };
   }, [story]);
 
   // Card movement in sequence
@@ -42,9 +55,11 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     if (isCorrect) {
       setIsOrdered(true);
       audioSynth.playCelebration();
-      tts.speak(`¡Excelente! Ordenaste la historia a la perfección. Ahora disfruta de la función del Gran Teatro.`);
+      tts.speak(
+        `¡Excelente! Ordenaste la historia a la perfección. Ahora eres el narrador oficial del Gran Teatro. ¡Lee cada lámina en voz alta!`
+      );
       setActiveSlideIndex(0);
-      playSlideAudio(userSequence[0]);
+      setMicFeedback('🎙️ Pulsa "Narrar en Voz Alta" para leer con tu micrófono.');
     } else {
       audioSynth.playError();
       tts.speak(`Casi lo logras. Revisa el orden de las láminas para que la historia tenga sentido.`);
@@ -52,43 +67,86 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
   };
 
   const playSlideAudio = (card: KamishibaiCard) => {
+    stt.stop();
+    setIsListening(false);
     audioSynth.playChime(card.sequenceIndex);
     tts.speak(card.narrativeText);
   };
 
   const handleNextSlide = () => {
+    stt.stop();
+    setIsListening(false);
+    setSpokenTranscript('');
+    setMicFeedback('');
+
     if (activeSlideIndex + 1 < userSequence.length) {
       const nextIdx = activeSlideIndex + 1;
       setActiveSlideIndex(nextIdx);
-      playSlideAudio(userSequence[nextIdx]);
     } else {
       // Theater finished!
       audioSynth.playCelebration();
-      tts.speak(`Fin de la historia. ¡Gran trabajo como narrador!`);
+      tts.speak(`Fin de la historia. ¡Gran trabajo como narrador de ${story.title}!`);
       setTimeout(() => {
         onComplete(3);
-      }, 1500);
+      }, 1800);
     }
   };
 
   const handlePrevSlide = () => {
+    stt.stop();
+    setIsListening(false);
+    setSpokenTranscript('');
+    setMicFeedback('');
+
     if (activeSlideIndex > 0) {
       const prevIdx = activeSlideIndex - 1;
       setActiveSlideIndex(prevIdx);
-      playSlideAudio(userSequence[prevIdx]);
     }
   };
 
   const currentSlide = userSequence[activeSlideIndex] || userSequence[0];
 
+  // Start Mic Narration
+  const handleStartMicNarration = () => {
+    audioSynth.playClick();
+    setSpokenTranscript('');
+    setMicFeedback('🎙️ Escuchando tu narración... ¡Lee la lámina en voz alta!');
+
+    stt.start(currentSlide.narrativeText, {
+      onStart: () => setIsListening(true),
+      onEnd: () => setIsListening(false),
+      onTranscript: (text) => {
+        setSpokenTranscript(text);
+      },
+      onMatch: () => {
+        setIsListening(false);
+        setMicFeedback('¡Excelente narración! ✨ Avanzando...');
+        audioSynth.playCelebration();
+        tts.speak('¡Excelente narración!');
+        setTimeout(() => {
+          handleNextSlide();
+        }, 1200);
+      },
+      onError: (err) => {
+        setIsListening(false);
+        setMicFeedback(err);
+      },
+    });
+  };
+
+  const handleStopMicNarration = () => {
+    stt.stop();
+    setIsListening(false);
+  };
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6 bg-slate-900/90 border-2 border-rose-500/40 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-md">
+    <div className="max-w-2xl mx-auto space-y-5 bg-slate-900/90 border-2 border-rose-500/40 rounded-3xl p-5 sm:p-7 shadow-2xl backdrop-blur-md">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <span className="text-3xl">🎭</span>
           <div>
-            <h3 className="text-lg font-black text-rose-300">Gran Teatro Kamishibai</h3>
+            <h3 className="text-base sm:text-lg font-black text-rose-300">Gran Teatro Kamishibai</h3>
             <p className="text-xs text-slate-400">{story.title}</p>
           </div>
         </div>
@@ -127,7 +185,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                   <button
                     onClick={() => handleMoveCard(idx, idx - 1)}
                     disabled={idx === 0}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs"
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold"
                   >
                     ⬅️ Mover
                   </button>
@@ -143,7 +201,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                   <button
                     onClick={() => handleMoveCard(idx, idx + 1)}
                     disabled={idx === userSequence.length - 1}
-                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs"
+                    className="p-1.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-30 rounded-lg text-xs font-bold"
                   >
                     Mover ➡️
                   </button>
@@ -166,7 +224,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
           {/* Wooden Theater Frame */}
           <div className="relative bg-gradient-to-b from-amber-950 via-amber-900 to-amber-950 p-4 sm:p-6 rounded-3xl border-4 border-amber-700 shadow-2xl">
             {/* Paper Story Card */}
-            <div className="bg-slate-950 border-2 border-amber-600/40 rounded-2xl p-6 text-center space-y-4 min-h-[220px] flex flex-col justify-between shadow-inner">
+            <div className="bg-slate-950 border-2 border-amber-600/40 rounded-2xl p-5 sm:p-6 text-center space-y-4 min-h-[220px] flex flex-col justify-between shadow-inner">
               <div className="flex justify-center items-center gap-3 text-5xl sm:text-6xl animate-bounce-slow">
                 {currentSlide.pictograms.map((p, i) => (
                   <span key={i}>{p}</span>
@@ -183,21 +241,50 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
             </div>
           </div>
 
-          {/* Navigation Controls */}
-          <div className="flex justify-between items-center gap-3">
+          {/* Voice Reading Transcript Feedback */}
+          {spokenTranscript && (
+            <div className="text-xs font-medium text-slate-300 bg-slate-950 p-2.5 rounded-xl border border-rose-500/40 flex items-center justify-center gap-1.5 animate-fade-in">
+              <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
+              <span>Te escuché: <strong className="text-amber-300">&ldquo;{spokenTranscript}&rdquo;</strong></span>
+            </div>
+          )}
+
+          {micFeedback && (
+            <p className="text-center text-[11px] text-rose-300 font-bold">{micFeedback}</p>
+          )}
+
+          {/* Controls Bar */}
+          <div className="flex justify-between items-center gap-2 flex-wrap">
             <button
               onClick={handlePrevSlide}
               disabled={activeSlideIndex === 0}
-              className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-bold rounded-xl flex items-center gap-1 text-slate-200"
+              className="px-3.5 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-xs font-bold rounded-xl flex items-center gap-1 text-slate-200"
             >
               <ArrowLeft className="w-4 h-4" /> Anterior
             </button>
 
+            {/* Speech Recognition Mic Button */}
+            {isListening ? (
+              <button
+                onClick={handleStopMicNarration}
+                className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-black rounded-xl shadow flex items-center gap-1.5 animate-pulse"
+              >
+                <MicOff className="w-4 h-4" /> Detener Micrófono
+              </button>
+            ) : (
+              <button
+                onClick={handleStartMicNarration}
+                className="px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 text-slate-950 text-xs font-black rounded-xl shadow-lg flex items-center gap-1.5 active:scale-95 transition-transform"
+              >
+                <Mic className="w-4 h-4" /> 🎙️ ¡Narrar en Voz Alta!
+              </button>
+            )}
+
             <button
               onClick={() => playSlideAudio(currentSlide)}
-              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-black rounded-xl shadow flex items-center gap-1.5"
+              className="px-3 py-2.5 bg-rose-950 hover:bg-rose-900 text-rose-300 text-xs font-bold rounded-xl border border-rose-500/40 flex items-center gap-1"
             >
-              <Volume2 className="w-4 h-4" /> Narrar Lámina
+              <Volume2 className="w-3.5 h-3.5" /> Oír
             </button>
 
             <button

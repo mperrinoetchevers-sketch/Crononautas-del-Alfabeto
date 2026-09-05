@@ -8,8 +8,8 @@
   "badge": "Caballero Lector",
   "artifactName": "Engranaje de Hierro Real",
   "artifactIcon": "⚙️",
-  "description": "¡Adéntrate en la fortaleza medieval! Esquiva dragones, atraviesa el laberinto de la mazmorra, redacta tratados de caballeros y rescata el engranaje real.",
-  "pedagogicalFocus": "Lectura expresiva, fluidez lectora, ortografía de palabras complejas y comprensión inferencial.",
+  "description": "¡Adéntrate en la fortaleza medieval! Esquiva la cría de dragón, atraviesa el laberinto de la mazmorra, redacta tratados de caballeros y rescata el engranaje real.",
+  "pedagogicalFocus": "Lectura expresiva en voz alta, fluidez lectora, ortografía de palabras complejas y comprensión inferencial.",
   "syllablesWords": [
     { "id": "m1", "word": "castillo", "syllables": ["cas", "ti", "llo"], "pictogram": "🏰", "category": "Medieval", "hint": "Gran fortaleza de piedra con torres y foso" },
     { "id": "m2", "word": "dragón", "syllables": ["dra", "gón"], "pictogram": "🐉", "category": "Medieval", "hint": "Criatura alada que escupe fuego" },
@@ -69,7 +69,15 @@
       { "id": "col-m5", "letter": "D", "x": 1, "y": 5, "phonemeHint": "Sonido /d/" },
       { "id": "col-m6", "letter": "A", "x": 4, "y": 5, "phonemeHint": "Vocal /a/" }
     ],
-    "hint": "Navega por las piedras del castillo, recolecta las letras de E-S-P-A-D-A y llega a la salida."
+    "chaser": {
+      "name": "Cría de Dragón",
+      "emoji": "🐲",
+      "startX": 3,
+      "startY": 5,
+      "moveIntervalMs": 1350,
+      "warningMessage": "¡Cuidado con la Cría de Dragón que vuela por los pasillos!"
+    },
+    "hint": "Navega por las piedras del castillo, esquiva al dragón, recolecta las letras de E-S-P-A-D-A y llega a la salida."
   },
   "pyramidChallenges": [
     {
