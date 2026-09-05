@@ -5,7 +5,7 @@ import { Volume2, Sparkles, ArrowLeft, ArrowRight, Mic, MicOff, Radio, CheckCirc
 import { KamishibaiStory, KamishibaiCard } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
-import { stt } from '@/lib/stt';
+import { stt, getMatchedWordIndices } from '@/lib/stt';
 
 interface KamishibaiTheaterProps {
   story: KamishibaiStory;
@@ -20,6 +20,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
   // Speech Recognition state for Theater Narration
   const [isListening, setIsListening] = useState(false);
   const [spokenTranscript, setSpokenTranscript] = useState('');
+  const [matchedIndices, setMatchedIndices] = useState<Set<number>>(new Set());
   const [micFeedback, setMicFeedback] = useState('');
 
   // Shuffle the cards on load
@@ -29,6 +30,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     setIsOrdered(false);
     setActiveSlideIndex(0);
     setSpokenTranscript('');
+    setMatchedIndices(new Set());
     setMicFeedback('');
     tts.speak(
       `Bienvenido al Gran Teatro Kamishibai. Ordena las láminas de la historia desde el inicio hasta el final.`
@@ -56,7 +58,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
       setIsOrdered(true);
       audioSynth.playCelebration();
       tts.speak(
-        `¡Excelente! Ordenaste la historia a la perfección. Ahora eres el narrador oficial del Gran Teatro. ¡Lee cada lámina en voz alta!`
+        `¡Excelente! Ordenaste la historia a la perfección. Ahora eres el narrador oficial del Gran Teatro. ¡Lee la lámina completa en voz alta!`
       );
       setActiveSlideIndex(0);
       setMicFeedback('🎙️ Pulsa "Narrar en Voz Alta" para leer con tu micrófono.');
@@ -77,6 +79,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     stt.stop();
     setIsListening(false);
     setSpokenTranscript('');
+    setMatchedIndices(new Set());
     setMicFeedback('');
 
     if (activeSlideIndex + 1 < userSequence.length) {
@@ -96,6 +99,7 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
     stt.stop();
     setIsListening(false);
     setSpokenTranscript('');
+    setMatchedIndices(new Set());
     setMicFeedback('');
 
     if (activeSlideIndex > 0) {
@@ -105,22 +109,27 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
   };
 
   const currentSlide = userSequence[activeSlideIndex] || userSequence[0];
+  const slideWords = currentSlide.narrativeText.split(' ');
 
   // Start Mic Narration
   const handleStartMicNarration = () => {
     audioSynth.playClick();
     setSpokenTranscript('');
-    setMicFeedback('🎙️ Escuchando tu narración... ¡Lee la lámina en voz alta!');
+    setMatchedIndices(new Set());
+    setMicFeedback('🎙️ Escuchando... ¡Lee toda la historia de la lámina!');
 
     stt.start(currentSlide.narrativeText, {
       onStart: () => setIsListening(true),
       onEnd: () => setIsListening(false),
       onTranscript: (text) => {
         setSpokenTranscript(text);
+        const matched = getMatchedWordIndices(currentSlide.narrativeText, text);
+        setMatchedIndices(matched);
       },
       onMatch: () => {
         setIsListening(false);
-        setMicFeedback('¡Excelente narración! ✨ Avanzando...');
+        setMatchedIndices(new Set(slideWords.map((_, i) => i)));
+        setMicFeedback('¡Excelente narración completa! ✨ Avanzando...');
         audioSynth.playCelebration();
         tts.speak('¡Excelente narración!');
         setTimeout(() => {
@@ -231,12 +240,27 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
                 ))}
               </div>
 
-              <h4 className="text-base sm:text-lg font-black text-amber-200 leading-relaxed px-2">
-                &ldquo;{currentSlide.narrativeText}&rdquo;
-              </h4>
+              {/* Word Highlighting Sentence for Narration */}
+              <div className="text-base sm:text-lg font-black leading-relaxed px-2 flex flex-wrap justify-center gap-1.5">
+                {slideWords.map((word, wordIdx) => {
+                  const isWordRead = matchedIndices.has(wordIdx);
+                  return (
+                    <span
+                      key={wordIdx}
+                      className={`px-1.5 py-0.5 rounded-lg transition-all duration-200 ${
+                        isWordRead
+                          ? 'bg-amber-400/30 text-amber-300 border border-amber-400/50 scale-105 shadow'
+                          : 'text-amber-200'
+                      }`}
+                    >
+                      {word}
+                    </span>
+                  );
+                })}
+              </div>
 
               <div className="text-[11px] text-amber-400/80 font-bold uppercase tracking-wider">
-                {currentSlide.title}
+                {currentSlide.title} • ({matchedIndices.size} de {slideWords.length} palabras leídas)
               </div>
             </div>
           </div>
@@ -245,7 +269,9 @@ export default function KamishibaiTheater({ story, onComplete }: KamishibaiTheat
           {spokenTranscript && (
             <div className="text-xs font-medium text-slate-300 bg-slate-950 p-2.5 rounded-xl border border-rose-500/40 flex items-center justify-center gap-1.5 animate-fade-in">
               <Radio className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
-              <span>Te escuché: <strong className="text-amber-300">&ldquo;{spokenTranscript}&rdquo;</strong></span>
+              <span>
+                Te escuché: <strong className="text-amber-300">&ldquo;{spokenTranscript}&rdquo;</strong>
+              </span>
             </div>
           )}
 

@@ -1,11 +1,11 @@
 ﻿'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Lock, Unlock, Sparkles, Check, Mic, MicOff, Radio, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Volume2, Lock, Unlock, Sparkles, Check, Mic, MicOff, Radio } from 'lucide-react';
 import { PyramidChallenge } from '@/lib/game-data';
 import { audioSynth } from '@/lib/audio-synth';
 import { tts } from '@/lib/tts';
-import { stt } from '@/lib/stt';
+import { stt, getMatchedWordIndices } from '@/lib/stt';
 
 interface PyramidReaderProps {
   challenge: PyramidChallenge;
@@ -15,25 +15,26 @@ interface PyramidReaderProps {
 export default function PyramidReader({ challenge, onComplete }: PyramidReaderProps) {
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [isUnlocked, setIsUnlocked] = useState(false);
-  
+
   // Speech Recognition state
   const [isListening, setIsListening] = useState(false);
   const [spokenTranscript, setSpokenTranscript] = useState('');
-  const [matchScore, setMatchScore] = useState(0);
+  const [matchedIndices, setMatchedIndices] = useState<Set<number>>(new Set());
   const [micSupported, setMicSupported] = useState(true);
   const [micFeedback, setMicFeedback] = useState<string>('');
 
   const currentStep = challenge.steps[activeStepIndex] || challenge.steps[0];
+  const stepWords = currentStep.text.split(' ');
 
   useEffect(() => {
     setActiveStepIndex(0);
     setIsUnlocked(false);
     setSpokenTranscript('');
-    setMatchScore(0);
+    setMatchedIndices(new Set());
     setMicSupported(stt.isSupported());
 
     tts.speak(
-      `Lectura en Pirámide: ${challenge.title}. Lee cada oración en voz alta al micrófono para abrir el candado.`
+      `Lectura en Pirámide: ${challenge.title}. Lee la oración completa en voz alta al micrófono para abrir el candado.`
     );
 
     return () => {
@@ -50,8 +51,8 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
     if (stepIdx + 1 < challenge.steps.length) {
       setActiveStepIndex(stepIdx + 1);
       setSpokenTranscript('');
-      setMatchScore(0);
-      setMicFeedback('¡Piso completado! Lee el siguiente:');
+      setMatchedIndices(new Set());
+      setMicFeedback('¡Piso completado! Lee la siguiente oración completa:');
     } else {
       // Pyramid fully unlocked!
       setIsUnlocked(true);
@@ -70,18 +71,21 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
   const handleStartMicReading = () => {
     audioSynth.playClick();
     setSpokenTranscript('');
-    setMatchScore(0);
-    setMicFeedback('🎙️ Escuchando... ¡Lee la oración en voz alta!');
+    setMatchedIndices(new Set());
+    setMicFeedback('🎙️ Escuchando... ¡Lee toda la oración de corrido!');
 
     const success = stt.start(currentStep.text, {
       onStart: () => setIsListening(true),
       onEnd: () => setIsListening(false),
       onTranscript: (text) => {
         setSpokenTranscript(text);
+        // Real-time word highlight
+        const matched = getMatchedWordIndices(currentStep.text, text);
+        setMatchedIndices(matched);
       },
-      onMatch: (text, score) => {
-        setMatchScore(score);
-        setMicFeedback('¡Excelente pronunciación! ✨');
+      onMatch: () => {
+        setMatchedIndices(new Set(stepWords.map((_, i) => i)));
+        setMicFeedback('¡Excelente lectura completa! ✨');
         tts.speak('¡Muy bien leído!');
         setTimeout(() => {
           handleFloorPassed(activeStepIndex);
@@ -112,7 +116,7 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
 
     tts.speak(currentStep.text, {
       onEnd: () => {
-        setMicFeedback('¡Ahora intenta leerlo tú en voz alta!');
+        setMicFeedback('¡Ahora intenta leer tú la oración completa en voz alta!');
       },
     });
   };
@@ -146,18 +150,37 @@ export default function PyramidReader({ challenge, onComplete }: PyramidReaderPr
             <span className="flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Piso {activeStepIndex + 1} de {challenge.steps.length}
             </span>
-            <span className="text-amber-300">Lee en voz alta para desbloquear</span>
+            <span className="text-amber-300">
+              {matchedIndices.size} de {stepWords.length} palabras leídas
+            </span>
           </div>
 
-          <p className="text-base sm:text-lg font-black text-amber-200 leading-relaxed px-2 bg-purple-950/40 py-2 rounded-xl border border-purple-800/40">
-            &ldquo;{currentStep.text}&rdquo;
-          </p>
+          {/* Interactive Word Highlighting Sentence */}
+          <div className="text-base sm:text-lg font-black leading-relaxed px-3 bg-purple-950/40 py-3 rounded-xl border border-purple-800/40 flex flex-wrap justify-center gap-1.5">
+            {stepWords.map((word, wordIdx) => {
+              const isWordRead = matchedIndices.has(wordIdx);
+              return (
+                <span
+                  key={wordIdx}
+                  className={`px-1.5 py-0.5 rounded-lg transition-all duration-200 ${
+                    isWordRead
+                      ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-400/50 scale-105 shadow'
+                      : 'text-yellow-100'
+                  }`}
+                >
+                  {word}
+                </span>
+              );
+            })}
+          </div>
 
           {/* Real-time transcript feedback */}
           {spokenTranscript && (
             <div className="text-xs font-medium text-slate-300 bg-slate-900/80 p-2 rounded-xl border border-slate-700 animate-fade-in flex items-center justify-center gap-1.5">
               <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
-              <span>Te escuché: <strong className="text-emerald-300">&ldquo;{spokenTranscript}&rdquo;</strong></span>
+              <span>
+                Te escuché: <strong className="text-emerald-300">&ldquo;{spokenTranscript}&rdquo;</strong>
+              </span>
             </div>
           )}
 
